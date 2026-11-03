@@ -1,55 +1,85 @@
 name: Build GeoCat databases
-
+run-name: "GeoCat · обе базы · ${{ github.event_name }} · #${{ github.run_number }}"
 on:
-  # RunetFreedom usually publishes several releases daily.
-  # Run after its typical morning UTC update.
   schedule:
     - cron: "30 12 * * *"
   workflow_dispatch:
+    inputs:
+      force:
+        description: "Принудительно скачать и пересобрать обе базы"
+        type: boolean
+        default: false
   push:
     branches: [main]
     paths:
+      - "build_all.py"
       - "build_geosite_lite.py"
       - "build_geoip_lite.py"
+      - "tests/**"
       - ".github/workflows/build.yml"
-
 permissions:
   contents: write
-
 concurrency:
   group: geocat-publish
   cancel-in-progress: false
-
 jobs:
   build:
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
-
+    timeout-minutes: 15
     steps:
-      - name: Check out main branch
-        uses: actions/checkout@v7.0.1
+      - name: Получить актуальный код
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: main
+          fetch-depth: 1
           persist-credentials: true
-
-      - name: Build and validate slim geosite.dat and geoip.dat
+      - name: Проверить сборщик тестами
+        run: python3 -m unittest discover -s tests -v
+      - name: Проверить релиз и собрать обе базы
+        id: databases
+        timeout-minutes: 10
+        env:
+          FORCE: ${{ inputs.force }}
+          PYTHONUNBUFFERED: "1"
         run: |
-          python3 --version
-          python3 build_geosite_lite.py --output geosite.dat
-          python3 build_geoip_lite.py --output geoip.dat
-          test -s geosite.dat
-          test -s geosite.dat.json
-          test -s geoip.dat
-          test -s geoip.dat.json
-
-      - name: Commit updated GeoSite, GeoIP and metadata
+          if [ "$FORCE" = "true" ]; then
+            python3 build_all.py --force
+          else
+            python3 build_all.py
+          fi
+      - name: Опубликовать базы и отчёт
+        id: publish
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f geosite.dat geosite.dat.json geoip.dat geoip.dat.json
+          git add -f geosite.dat geosite.dat.json geoip.dat geoip.dat.json STATUS.md status.json
           if git diff --cached --quiet; then
-            echo "No changes to publish."
+            echo "Результат уже опубликован."
             exit 0
           fi
-          git commit -m "chore: update GeoCat databases"
-          git push origin HEAD:main
+          git commit -m "chore: record GeoCat database check"
+          for attempt in 1 2 3; do
+            if git push origin HEAD:main; then
+              echo "Базы и отчёт успешно опубликованы."
+              exit 0
+            fi
+            if [ "$attempt" -lt 3 ]; then sleep 3; fi
+          done
+          echo "::error::Публикация не удалась. Проверь сеть и изменения main; запусти Run workflow заново."
+          exit 1
+      - name: Показать понятный итог
+        if: always()
+        env:
+          BUILD_RESULT: ${{ steps.databases.outcome }}
+          PUBLISH_RESULT: ${{ steps.publish.outcome }}
+        run: |
+          if [ "$BUILD_RESULT" = "success" ]; then
+            cat STATUS.md >> "$GITHUB_STEP_SUMMARY"
+            if [ "$PUBLISH_RESULT" = "success" ]; then
+              printf '\n## ✅ Публикация завершена успешно\n' >> "$GITHUB_STEP_SUMMARY"
+            else
+              printf '\n## ❌ Проверка прошла, но публикация не завершена\nПроверь шаг публикации. Этот запуск нельзя считать успешным обновлением.\n' >> "$GITHUB_STEP_SUMMARY"
+            fi
+          else
+            printf '# ❌ Проверка GeoCat не завершена\n\nНовые базы этим запуском не опубликованы. Открой красный шаг выше: там причина ошибки. Ранее опубликованный STATUS.md относится к предыдущей успешной проверке.\n' >> "$GITHUB_STEP_SUMMARY"
+          fi

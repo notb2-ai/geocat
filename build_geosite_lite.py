@@ -13,6 +13,10 @@ import os
 from pathlib import Path
 import tempfile
 import urllib.request
+import urllib.error
+import http.client
+import socket
+import time
 
 RELEASE_API = "https://api.github.com/repos/runetfreedom/russia-v2ray-rules-dat/releases/latest"
 MAX_SOURCE_BYTES = 160_000_000
@@ -36,12 +40,41 @@ CATEGORIES = (
 
 
 def download(url: str, max_bytes: int) -> bytes:
-    req = urllib.request.Request(url, headers={"User-Agent": "GeoCat-Builder/1.0", "Accept": "application/vnd.github+json"})
-    with urllib.request.urlopen(req, timeout=120) as resp:
-        data = resp.read(max_bytes + 1)
-    if len(data) > max_bytes:
-        raise ValueError(f"Remote file exceeds allowed {max_bytes} bytes: {url}")
-    return data
+    """Bounded downloads with progress and retries for transient transport errors."""
+    for attempt in range(1, 4):
+        started = time.monotonic()
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "GeoCat-Builder/2.0"})
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                chunks, total, next_log = [], 0, 16_000_000
+                while True:
+                    if time.monotonic() - started > 180:
+                        raise TimeoutError("Download attempt exceeded 180 seconds")
+                    chunk = resp.read(min(1_048_576, max_bytes + 1 - total))
+                    if not chunk:
+                        break
+                    chunks.append(chunk)
+                    total += len(chunk)
+                    if total > max_bytes:
+                        raise ValueError(f"Remote file exceeds {max_bytes} bytes")
+                    if total >= next_log:
+                        print(f"Downloaded {total:,} bytes ({time.monotonic()-started:.1f}s)", flush=True)
+                        next_log += 16_000_000
+                return b"".join(chunks)
+        except (urllib.error.URLError, TimeoutError, socket.timeout,
+                http.client.IncompleteRead, ConnectionError) as exc:
+            if isinstance(exc, urllib.error.HTTPError) and exc.code not in (408, 429, 500, 502, 503, 504):
+                raise
+            if attempt == 3:
+                raise
+            delay = 2 ** attempt
+            if isinstance(exc, urllib.error.HTTPError):
+                retry_after = exc.headers.get("Retry-After", "")
+                if retry_after.isdigit():
+                    delay = min(30, max(delay, int(retry_after)))
+            print(f"Temporary download error ({type(exc).__name__}); retry {attempt+1}/3 in {delay}s", flush=True)
+            time.sleep(delay)
+    raise AssertionError("Unreachable")
 
 
 def fetch_latest_release() -> tuple[bytes, dict]:
@@ -73,6 +106,8 @@ def varint_read(buf: bytes, pos: int, end: int) -> tuple[int, int]:
             raise ValueError("Truncated protobuf varint")
         byte = buf[pos]
         pos += 1
+        if shift == 63 and byte > 1:
+            raise ValueError("Protobuf varint overflow")
         value |= (byte & 0x7f) << shift
         if not byte & 0x80:
             return value, pos
@@ -100,8 +135,8 @@ def protobuf_fields(buf: bytes):
         start = pos
         key, pos = varint_read(buf, pos, end)
         number, wire = key >> 3, key & 7
-        if number == 0:
-            raise ValueError("Protobuf field number 0")
+        if number == 0 or number > 0x1fffffff:
+            raise ValueError("Invalid protobuf field number")
         if wire == 2:
             size, pos = varint_read(buf, pos, end)
             value_start, value_end = pos, pos + size
@@ -201,10 +236,11 @@ def main() -> None:
     atomic_write(args.output.with_suffix(args.output.suffix + ".json"),
                  (json.dumps(metadata, indent=2, ensure_ascii=False) + "\n").encode())
     print(f"OK: {args.output}: {len(data):,} -> {len(output):,} bytes; "
-          f"{100 * (1 - len(output) / len(data)):.1f}% smaller")
+          f"{100 * (1 - len(output) / len(data)):.4f}% smaller")
     print("Preserved categories:", ", ".join(wanted))
     print("SHA256:", stats["output_sha256"])
 
 
 if __name__ == "__main__":
     main()
+

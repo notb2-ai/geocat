@@ -1,5 +1,9 @@
 # GeoCat 🐈 — compact GeoSite & GeoIP for v2rayNG
 
+[![Build GeoCat databases](https://github.com/notb2-ai/geocat/actions/workflows/build.yml/badge.svg)](https://github.com/notb2-ai/geocat/actions/workflows/build.yml)
+
+**🐈 [Последняя успешная проверка: версия, изменения, время → STATUS.md](STATUS.md)**
+
 This repository produces **minimal, lossless subsets** of [RunetFreedom's GeoSite and GeoIP databases](https://github.com/runetfreedom/russia-v2ray-rules-dat). Original selected category payloads are copied byte-for-byte, preserving matching behavior.
 
 ## Download
@@ -8,7 +12,7 @@ This repository produces **minimal, lossless subsets** of [RunetFreedom's GeoSit
 - **[geoip.dat](https://raw.githubusercontent.com/notb2-ai/geocat/main/geoip.dat)** — ready-to-use GeoIP database containing **only** `private`
 - [geosite.dat.json](https://raw.githubusercontent.com/notb2-ai/geocat/main/geosite.dat.json) and [geoip.dat.json](https://raw.githubusercontent.com/notb2-ai/geocat/main/geoip.dat.json) — source release, SHA-256, sizes and selected categories
 
-In v2rayNG, go to **Asset files → + → URL** and add or change the source for each database. Use the exact names **`geosite.dat`** and **`geoip.dat`** and their corresponding raw links above; tap the download/cloud icon and verify that both file sizes changed before reconnecting VPN.
+In v2rayNG, go to **Asset files → + → URL** and add or change the source for each database. Use the exact names **`geosite.dat`** and **`geoip.dat`** and their corresponding raw links above; tap the download/cloud icon and wait for successful downloads before reconnecting VPN. File sizes may remain unchanged even when an update succeeds.
 
 Keep **`geoip-only-cn-private.dat`** from v2rayNG unchanged. v2rayNG internally rewrites `geoip:private` to refer to this special built-in file, so a PRIVATE-only main GeoIP usually provides a download/storage optimization rather than another runtime saving for that rule.
 
@@ -43,19 +47,41 @@ Explicit domain rules such as `domain:beeline.ru` and `domain:dom.ru` are not pa
 
 ## Build and publishing
 
-The [GitHub Actions workflow](.github/workflows/build.yml) runs daily at **12:30 UTC (15:30 Moscow time)**, supports manual **Run workflow**, and rebuilds on changes to the builder scripts/workflow. The scripts:
+The [GitHub Actions workflow](.github/workflows/build.yml) checks **both** databases daily at **12:30 UTC (15:30 Moscow time)** and on builder/test/workflow changes.
 
-1. Fetch the latest RunetFreedom release and verify the upstream SHA-256 of each source.
-2. Preserve 15 GeoSite categories and **only PRIVATE** from GeoIP without changing the selected payloads.
-3. Validate each output's structure and fail on missing categories, malformed CIDRs or a failed post-build check.
-4. Generate `geosite.dat`, `geoip.dat` and JSON metadata; commit changed outputs to `main`.
+### Как проверить результат
 
-One-time local build:
+Открой **[STATUS.md](STATUS.md)**: там дата последней успешной проверки в МСК, исходный релиз, результат для каждой базы, количество записей и SHA-256. Машиночитаемый отчёт: [status.json](status.json).
+
+- **Файл изменился** — изменились байты базы.
+- **Новый исходный релиз; файл прежний** — проверен новый RunetFreedom, выбранные категории остались такими же.
+- **Изменений нет** — версия и содержимое прежние; проверка выполнена успешно.
+
+В [Actions](https://github.com/notb2-ai/geocat/actions/workflows/build.yml) открой последний запуск: в **Summary** есть тот же отчёт и отдельный результат публикации. Зелёный запуск означает успешное завершение. При ошибке старые опубликованные базы и STATUS.md остаются от предыдущего успешного запуска — всегда проверяй дату отчёта и последний запуск Actions.
+
+Для ручного запуска: **Actions → Build GeoCat databases → Run workflow → main**. Не используй **Re-run jobs** у старой сборки: GitHub повторяет сохранённую старую версию workflow (первые сборки обновляли только GeoSite). Опция **force** принудительно скачивает и пересобирает обе базы.
+
+### Как устроена сборка
+
+1. One request selects one latest upstream release for both files.
+2. The builder compares upstream SHA-256, asset identity/size, selected categories, builder fingerprint and verified local output SHA-256. If all match, it skips the large source download. Changes to builder code invalidate this fast path.
+3. When needed, the two source files download in parallel. Downloads log progress, retry transient errors up to three times, and have time/size bounds. Hash mismatches stop publication.
+4. Original category payloads are copied byte-for-byte. Both outputs must pass validation before output files are written. The workflow commits both databases, metadata and reports together; it never force-pushes.
+5. Every successful check records its timestamp, even when database bytes do not change. Thus a status-only commit is normal. A bot status commit does not match the build-trigger paths.
+
+The workflow has a 15-minute overall job limit and a 10-minute database-step limit. Queue and checkout time depend on GitHub; the report's duration covers only checking/building. The builder uses Python's standard library; no pip installs or external cache services are required.
+
+One-time local check/build of both databases:
 
 ```bash
-python3 build_geosite_lite.py --output geosite.dat
-python3 build_geoip_lite.py --output geoip.dat
+python3 build_all.py
+# Force source downloads and rebuild:
+python3 build_all.py --force
+# Offline unit tests:
+python3 -m unittest discover -s tests -v
 ```
+
+The original `build_geosite_lite.py` and `build_geoip_lite.py` commands remain available for individual/local builds, but the shared workflow uses `build_all.py`.
 
 To include an additional category for testing:
 
@@ -71,3 +97,4 @@ python3 build_geosite_lite.py --extra google --output geosite.dat
 - This repository carries a [GPL-3.0 license](LICENSE). The upstream data are redistributed in modified form (selected categories only), with source attribution and changes documented here.
 
 This project is independent and is not an official RunetFreedom distribution.
+

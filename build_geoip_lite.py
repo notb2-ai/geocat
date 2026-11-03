@@ -42,10 +42,13 @@ def verify_private_geoip(dat: bytes) -> int:
                 elif fn == 2 and fw == 0:
                     val, _ = varint_read(cidr, vs, ve)
                     prefixes.append(val)
-            if len(addresses) != 1 or len(prefixes) != 1:
+            if len(addresses) != 1 or len(prefixes) > 1:
                 raise ValueError("Malformed GeoIP CIDR")
-            if len(addresses[0]) not in (4, 16) or prefixes[0] > len(addresses[0]) * 8:
+            prefix = prefixes[0] if prefixes else 0  # proto3 default
+            if len(addresses[0]) not in (4, 16) or prefix > len(addresses[0]) * 8:
                 raise ValueError("Invalid GeoIP CIDR prefix or IP")
+            if prefix == 0:
+                raise ValueError("Default route /0 is not allowed in PRIVATE")
             count += 1
         elif number == 3 and wire == 0:
             reversed_match, _ = varint_read(entry, start, end)
@@ -105,3 +108,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
