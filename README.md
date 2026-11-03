@@ -1,17 +1,20 @@
 # RunetFreedom Lite — GeoSite for v2rayNG
 
-This repository produces a **minimal, lossless subset** of [RunetFreedom's geosite.dat](https://github.com/runetfreedom/russia-v2ray-rules-dat), preserving only selected GeoSite categories. Original category names and encoded category entries are copied byte-for-byte.
+This repository produces **minimal, lossless subsets** of [RunetFreedom's GeoSite and GeoIP databases](https://github.com/runetfreedom/russia-v2ray-rules-dat). Original selected category payloads are copied byte-for-byte, preserving matching behavior.
 
 ## Download
 
 - **[geosite.dat](https://raw.githubusercontent.com/notb2-ai/runetfreedom-lite/main/geosite.dat)** — ready-to-use Xray/V2Ray GeoSite database
-- [geosite.dat.json](https://raw.githubusercontent.com/notb2-ai/runetfreedom-lite/main/geosite.dat.json) — source release, SHA-256, size and retained categories
+- **[geoip.dat](https://raw.githubusercontent.com/notb2-ai/runetfreedom-lite/main/geoip.dat)** — ready-to-use GeoIP database containing **only** `private`
+- [geosite.dat.json](https://raw.githubusercontent.com/notb2-ai/runetfreedom-lite/main/geosite.dat.json) and [geoip.dat.json](https://raw.githubusercontent.com/notb2-ai/runetfreedom-lite/main/geoip.dat.json) — source release, SHA-256, sizes and selected categories
 
-In v2rayNG, go to **Asset files → + → URL**, enter the asset name **`geosite.dat`** and the raw download link above, then use the download/cloud icon. Ensure the downloaded file is displayed and re-connect the VPN.
+In v2rayNG, go to **Asset files → + → URL** and add or change the source for each database. Use the exact names **`geosite.dat`** and **`geoip.dat`** and their corresponding raw links above; tap the download/cloud icon and verify that both file sizes changed before reconnecting VPN.
 
-Keep `geoip.dat` from RunetFreedom and `geoip-only-cn-private.dat` from v2rayNG unchanged.
+Keep **`geoip-only-cn-private.dat`** from v2rayNG unchanged. v2rayNG internally rewrites `geoip:private` to refer to this special built-in file, so a PRIVATE-only main GeoIP usually provides a download/storage optimization rather than another runtime saving for that rule.
 
-## Preserved categories
+**Important:** the GeoIP Lite file has **only `geoip:private`**, not `geoip:ru`, `geoip:cn`, ASN or other GeoIP categories. If your client routing / DNS config needs another GeoIP category, use the full `geoip.dat` instead or extend the builder. The same limitation applies to GeoSite categories outside the selected set.
+
+## Preserved GeoSite categories
 
 Direct routing:
 
@@ -40,17 +43,18 @@ Explicit domain rules such as `domain:beeline.ru` and `domain:dom.ru` are not pa
 
 ## Build and publishing
 
-The [GitHub Actions workflow](.github/workflows/build.yml) runs daily at **12:30 UTC (15:30 Moscow time)** and supports manual **Run workflow**. The script:
+The [GitHub Actions workflow](.github/workflows/build.yml) runs daily at **12:30 UTC (15:30 Moscow time)**, supports manual **Run workflow**, and rebuilds on changes to the builder scripts/workflow. The scripts:
 
-1. Fetches the latest RunetFreedom release and verifies the upstream SHA-256.
-2. Parses the original GeoSite protobuf and preserves each selected category's payload **without changing its contents**.
-3. Fails if a required category is missing or the post-build verification fails.
-4. Generates `geosite.dat` and `geosite.dat.json` and commits changed outputs to `main`.
+1. Fetch the latest RunetFreedom release and verify the upstream SHA-256 of each source.
+2. Preserve 15 GeoSite categories and **only PRIVATE** from GeoIP without changing the selected payloads.
+3. Validate each output's structure and fail on missing categories, malformed CIDRs or a failed post-build check.
+4. Generate `geosite.dat`, `geoip.dat` and JSON metadata; commit changed outputs to `main`.
 
 One-time local build:
 
 ```bash
 python3 build_geosite_lite.py --output geosite.dat
+python3 build_geoip_lite.py --output geoip.dat
 ```
 
 To include an additional category for testing:
