@@ -1,12 +1,12 @@
-# RunetFreedom Lite — GeoSite for v2rayNG
+# GeoCat 🐈 — compact GeoSite & GeoIP for v2rayNG
 
 This repository produces **minimal, lossless subsets** of [RunetFreedom's GeoSite and GeoIP databases](https://github.com/runetfreedom/russia-v2ray-rules-dat). Original selected category payloads are copied byte-for-byte, preserving matching behavior.
 
 ## Download
 
-- **[geosite.dat](https://raw.githubusercontent.com/notb2-ai/runetfreedom-lite/main/geosite.dat)** — ready-to-use Xray/V2Ray GeoSite database
-- **[geoip.dat](https://raw.githubusercontent.com/notb2-ai/runetfreedom-lite/main/geoip.dat)** — ready-to-use GeoIP database containing **only** `private`
-- [geosite.dat.json](https://raw.githubusercontent.com/notb2-ai/runetfreedom-lite/main/geosite.dat.json) and [geoip.dat.json](https://raw.githubusercontent.com/notb2-ai/runetfreedom-lite/main/geoip.dat.json) — source release, SHA-256, sizes and selected categories
+- **[geosite.dat](https://raw.githubusercontent.com/notb2-ai/geocat/main/geosite.dat)** — ready-to-use Xray/V2Ray GeoSite database
+- **[geoip.dat](https://raw.githubusercontent.com/notb2-ai/geocat/main/geoip.dat)** — ready-to-use GeoIP database containing **only** `private`
+- [geosite.dat.json](https://raw.githubusercontent.com/notb2-ai/geocat/main/geosite.dat.json) and [geoip.dat.json](https://raw.githubusercontent.com/notb2-ai/geocat/main/geoip.dat.json) — source release, SHA-256, sizes and selected categories
 
 In v2rayNG, go to **Asset files → + → URL** and add or change the source for each database. Use the exact names **`geosite.dat`** and **`geoip.dat`** and their corresponding raw links above; tap the download/cloud icon and verify that both file sizes changed before reconnecting VPN.
 

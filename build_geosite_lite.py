@@ -36,7 +36,7 @@ CATEGORIES = (
 
 
 def download(url: str, max_bytes: int) -> bytes:
-    req = urllib.request.Request(url, headers={"User-Agent": "RunetFreedom-Lite-Builder/1.0", "Accept": "application/vnd.github+json"})
+    req = urllib.request.Request(url, headers={"User-Agent": "GeoCat-Builder/1.0", "Accept": "application/vnd.github+json"})
     with urllib.request.urlopen(req, timeout=120) as resp:
         data = resp.read(max_bytes + 1)
     if len(data) > max_bytes:

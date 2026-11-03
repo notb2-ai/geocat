@@ -1,4 +1,4 @@
-name: Build RunetFreedom Lite geosite
+name: Build GeoCat databases
 
 on:
   # RunetFreedom usually publishes several releases daily.
@@ -17,7 +17,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: runetfreedom-lite-publish
+  group: geocat-publish
   cancel-in-progress: false
 
 jobs:
@@ -51,5 +51,5 @@ jobs:
             echo "No changes to publish."
             exit 0
           fi
-          git commit -m "chore: update RunetFreedom Lite geosite"
+          git commit -m "chore: update GeoCat databases"
           git push origin HEAD:main
