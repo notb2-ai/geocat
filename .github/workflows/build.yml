@@ -1,0 +1,46 @@
+name: Build RunetFreedom Lite geosite
+
+on:
+  # RunetFreedom usually publishes several releases daily.
+  # Run after its typical morning UTC update.
+  schedule:
+    - cron: "30 12 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: runetfreedom-lite-publish
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+
+      - name: Build and validate slim geosite.dat
+        run: |
+          python3 --version
+          python3 build_geosite_lite.py --output geosite.dat
+          test -s geosite.dat
+          test -s geosite.dat.json
+
+      - name: Commit updated GeoSite and metadata
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f geosite.dat geosite.dat.json
+          if git diff --cached --quiet; then
+            echo "No changes to publish."
+            exit 0
+          fi
+          git commit -m "chore: update RunetFreedom Lite geosite"
+          git push origin HEAD:main
