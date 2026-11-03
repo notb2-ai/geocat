@@ -1,0 +1,27 @@
+{
+  "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
+  "release_tag": "202611031113",
+  "published_at": "2026-11-03T11:14:55Z",
+  "source_sha256": "fa52daa9731e27e063834f81245a14cfceb65fb80b295e83dc521a61601d8b47",
+  "source_categories": 1564,
+  "selected_categories": [
+    "ru-available-only-inside",
+    "category-bank-ru",
+    "category-ecommerce-ru",
+    "category-retail-ru",
+    "category-entertainment-ru",
+    "yandex",
+    "mailru-group",
+    "category-ai-ru",
+    "category-medicine-ru",
+    "category-travel-ru",
+    "megafon",
+    "mts-ru",
+    "rostelecom",
+    "t2-ru",
+    "category-public-tracker"
+  ],
+  "source_bytes": 85573062,
+  "output_bytes": 37956,
+  "output_sha256": "d117eade29dbb964b01220f4f84967fb4f44d5815df8bb57ff5bfc18eba30ee3"
+}
