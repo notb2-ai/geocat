@@ -2,7 +2,7 @@
 
 [![Build GeoCat databases](https://github.com/notb2-ai/geocat/actions/workflows/build.yml/badge.svg)](https://github.com/notb2-ai/geocat/actions/workflows/build.yml)
 
-**🐈 [Последняя успешная проверка: версия, изменения, время → STATUS.md](STATUS.md)**
+**🐈 [Статус обновлений → STATUS.md](STATUS.md)**
 
 This repository produces **minimal, lossless subsets** of [RunetFreedom's GeoSite and GeoIP databases](https://github.com/runetfreedom/russia-v2ray-rules-dat). Original selected category payloads are copied byte-for-byte, preserving matching behavior.
 
@@ -51,11 +51,10 @@ The [GitHub Actions workflow](.github/workflows/build.yml) checks **both** datab
 
 ### Как проверить результат
 
-Открой **[STATUS.md](STATUS.md)**: там дата последней успешной проверки в МСК, исходный релиз, результат для каждой базы, количество записей и SHA-256. Машиночитаемый отчёт: [status.json](status.json).
+Открой **[STATUS.md](STATUS.md)**: там только дата последней успешной проверки в МСК и результат для каждой базы. Машиночитаемый отчёт: [status.json](status.json).
 
-- **Файл изменился** — изменились байты базы.
-- **Новый исходный релиз; файл прежний** — проверен новый RunetFreedom, выбранные категории остались такими же.
-- **Изменений нет** — версия и содержимое прежние; проверка выполнена успешно.
+- **Обновлён** — изменились байты базы.
+- **Проверен — изменений нет** — проверка выполнена успешно; содержимое базы осталось прежним.
 
 В [Actions](https://github.com/notb2-ai/geocat/actions/workflows/build.yml) открой последний запуск: в **Summary** есть тот же отчёт и отдельный результат публикации. Зелёный запуск означает успешное завершение. При ошибке старые опубликованные базы и STATUS.md остаются от предыдущего успешного запуска — всегда проверяй дату отчёта и последний запуск Actions.
 

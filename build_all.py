@@ -5,7 +5,6 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone, timedelta
 import hashlib
 import json
-import os
 from pathlib import Path
 import re
 import time
@@ -117,25 +116,15 @@ def build_one(name, release, assets, outdir, build_hash, force=False):
     return output, meta, row
 
 def render_report(report):
-    labels = {'updated':'🆕 Файл изменился', 'source_updated':'✅ Новый исходный релиз; файл прежний', 'unchanged':'✅ Изменений нет'}
-    lines = ['# GeoCat — последняя успешная проверка', '',
-             f'Проверено: **{report["checked_at_moscow"]}**.',
-             f'Исходный релиз RunetFreedom: **{report["release"]}**.',
-             f'Проверка и сборка: **{report["seconds"]} с** (без ожидания runner, checkout и git push).', '',
-             '| Файл | Результат | Был релиз | Стал релиз | Размер | Записей | Загрузка оригинала |',
-             '|---|---|---|---|---:|---:|---|']
+    labels = {'updated': '🆕 Обновлён', 'source_updated': '✅ Проверен — изменений нет', 'unchanged': '✅ Проверен — изменений нет'}
+    lines = ['# GeoCat — статус обновлений', '',
+             f'Последняя успешная проверка: **{report["checked_at_moscow"]}**.', '',
+             '| Файл | Статус |',
+             '|---|---|']
     for r in report['files']:
-        lines.append(f'| {r["file"]} | {labels[r["state"]]} | {r["previous_release"] or "—"} | {r["release"]} | {r["bytes"]} | {r["rules"]} | {"Пропущена: проверенные данные прежние" if r["download_skipped"] else "Выполнена"} |')
-    lines += ['', '## Контрольные суммы', '']
-    for r in report['files']:
-        lines += [f'- **{r["file"]}**: `{r["sha256"]}`']
-    lines += ['', 'Файлы и этот отчёт публикуются одним коммитом после успешной проверки обеих баз.',
-              'Отчёт фиксирует последнюю успешную проверку. Более поздний запуск мог завершиться ошибкой: смотри Actions.',
-              'Новый релиз исходной базы не обязательно меняет выбранные категории. Одинаковый SHA-256 означает одинаковые байты.',
-              'На телефоне файлы нужно скачать отдельно в Asset files → ☁️ и переподключить VPN.', '']
-    if report.get('run_url'):
-        lines += [f'[Открыть этот запуск Actions]({report["run_url"]})', '']
-    return '\n'.join(lines)
+        lines.append(f'| {r["file"]} | {labels[r["state"]]} |')
+    return '\n'.join(lines) + '\n'
+
 
 def run(outdir, force=False):
     started = time.monotonic()
@@ -161,8 +150,6 @@ def run(outdir, force=False):
                   checked_at_moscow=now.astimezone(timezone(timedelta(hours=3))).strftime('%d.%m.%Y %H:%M:%S МСК'),
                   release=release['tag_name'], seconds=round(time.monotonic()-started, 3),
                   files=[r[2] for r in results])
-    if os.environ.get('GITHUB_RUN_ID'):
-        report['run_url'] = f'https://github.com/{os.environ["GITHUB_REPOSITORY"]}/actions/runs/{os.environ["GITHUB_RUN_ID"]}'
     atomic_write(outdir / 'status.json', encoded(report))
     atomic_write(outdir / 'STATUS.md', render_report(report).encode())
     print(f'Both databases verified successfully in {report["seconds"]}s. Publication is the next workflow step.', flush=True)

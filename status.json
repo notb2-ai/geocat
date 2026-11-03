@@ -26,8 +26,7 @@
       "bytes": 436,
       "rules": 28,
       "download_skipped": true,
-      "seconds": 0.0
+      "seconds": 0
     }
-  ],
-  "run_url": "https://github.com/notb2-ai/geocat/actions/runs/41711188191"
+  ]
 }
