@@ -34,7 +34,7 @@ jobs:
           fetch-depth: 1
           persist-credentials: true
       - name: Проверить сборщик тестами
-        run: python3 -m unittest discover -s tests -v
+        run: python3 -m unittest discover -s tests -v -b
       - name: Проверить релиз и собрать обе базы
         id: databases
         timeout-minutes: 10

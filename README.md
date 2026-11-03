@@ -78,7 +78,7 @@ python3 build_all.py
 # Force source downloads and rebuild:
 python3 build_all.py --force
 # Offline unit tests:
-python3 -m unittest discover -s tests -v
+python3 -m unittest discover -s tests -v -b
 ```
 
 The original `build_geosite_lite.py` and `build_geoip_lite.py` commands remain available for individual/local builds, but the shared workflow uses `build_all.py`.
