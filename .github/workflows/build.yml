@@ -6,6 +6,12 @@ on:
   schedule:
     - cron: "30 12 * * *"
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "build_geosite_lite.py"
+      - "build_geoip_lite.py"
+      - ".github/workflows/build.yml"
 
 permissions:
   contents: write
@@ -26,18 +32,21 @@ jobs:
           ref: main
           persist-credentials: true
 
-      - name: Build and validate slim geosite.dat
+      - name: Build and validate slim geosite.dat and geoip.dat
         run: |
           python3 --version
           python3 build_geosite_lite.py --output geosite.dat
+          python3 build_geoip_lite.py --output geoip.dat
           test -s geosite.dat
           test -s geosite.dat.json
+          test -s geoip.dat
+          test -s geoip.dat.json
 
-      - name: Commit updated GeoSite and metadata
+      - name: Commit updated GeoSite, GeoIP and metadata
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f geosite.dat geosite.dat.json
+          git add -f geosite.dat geosite.dat.json geoip.dat geoip.dat.json
           if git diff --cached --quiet; then
             echo "No changes to publish."
             exit 0
