@@ -1,7 +1,4 @@
 {
-  "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
-  "release_tag": "202611031113",
-  "published_at": "2026-11-03T11:14:55Z",
   "source_categories": 266,
   "selected_categories": [
     "private"
@@ -9,6 +6,15 @@
   "source_bytes": 17998485,
   "output_bytes": 436,
   "output_sha256": "4acc277c0425871bf1171a06302a60fec1d7ced5db204bb5b4090a5b6e0efe99",
-  "geoip_private_cidr_count": 28,
-  "source_sha256": "0a94d0aae6ef651103de7f9cfd25c5e29a469dba95b06d23481955d27f92fbea"
+  "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
+  "release_tag": "202611031113",
+  "published_at": "2026-11-03T11:14:55Z",
+  "source_sha256": "0a94d0aae6ef651103de7f9cfd25c5e29a469dba95b06d23481955d27f92fbea",
+  "source_asset_id": 705325717,
+  "builder_sha256": "dd9ec730c7451180eb12f619bd92f3aedd171bfadebf8f223611b776eef79dd7",
+  "category_counts": {
+    "private": 28
+  },
+  "rule_count": 28,
+  "geoip_private_cidr_count": 28
 }

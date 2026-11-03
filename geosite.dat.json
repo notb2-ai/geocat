@@ -1,8 +1,4 @@
 {
-  "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
-  "release_tag": "202611031113",
-  "published_at": "2026-11-03T11:14:55Z",
-  "source_sha256": "fa52daa9731e27e063834f81245a14cfceb65fb80b295e83dc521a61601d8b47",
   "source_categories": 1564,
   "selected_categories": [
     "ru-available-only-inside",
@@ -23,5 +19,29 @@
   ],
   "source_bytes": 85573062,
   "output_bytes": 37956,
-  "output_sha256": "d117eade29dbb964b01220f4f84967fb4f44d5815df8bb57ff5bfc18eba30ee3"
+  "output_sha256": "d117eade29dbb964b01220f4f84967fb4f44d5815df8bb57ff5bfc18eba30ee3",
+  "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
+  "release_tag": "202611031113",
+  "published_at": "2026-11-03T11:14:55Z",
+  "source_sha256": "fa52daa9731e27e063834f81245a14cfceb65fb80b295e83dc521a61601d8b47",
+  "source_asset_id": 705325475,
+  "builder_sha256": "dd9ec730c7451180eb12f619bd92f3aedd171bfadebf8f223611b776eef79dd7",
+  "category_counts": {
+    "ru-available-only-inside": 170,
+    "category-bank-ru": 356,
+    "category-ecommerce-ru": 201,
+    "category-retail-ru": 82,
+    "category-entertainment-ru": 35,
+    "yandex": 155,
+    "mailru-group": 300,
+    "category-ai-ru": 12,
+    "category-medicine-ru": 45,
+    "category-travel-ru": 25,
+    "megafon": 12,
+    "mts-ru": 13,
+    "rostelecom": 9,
+    "t2-ru": 3,
+    "category-public-tracker": 437
+  },
+  "rule_count": 1855
 }

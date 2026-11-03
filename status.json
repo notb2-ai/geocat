@@ -1,0 +1,33 @@
+{
+  "checked_at": "2026-11-03T20:15:52+00:00",
+  "checked_at_moscow": "03.11.2026 23:15:52 МСК",
+  "release": "202611031113",
+  "seconds": 4.272,
+  "files": [
+    {
+      "file": "geosite.dat",
+      "state": "unchanged",
+      "previous_release": "202611031113",
+      "release": "202611031113",
+      "previous_sha256": "d117eade29dbb964b01220f4f84967fb4f44d5815df8bb57ff5bfc18eba30ee3",
+      "sha256": "d117eade29dbb964b01220f4f84967fb4f44d5815df8bb57ff5bfc18eba30ee3",
+      "bytes": 37956,
+      "rules": 1855,
+      "download_skipped": false,
+      "seconds": 3.956
+    },
+    {
+      "file": "geoip.dat",
+      "state": "unchanged",
+      "previous_release": "202611031113",
+      "release": "202611031113",
+      "previous_sha256": "4acc277c0425871bf1171a06302a60fec1d7ced5db204bb5b4090a5b6e0efe99",
+      "sha256": "4acc277c0425871bf1171a06302a60fec1d7ced5db204bb5b4090a5b6e0efe99",
+      "bytes": 436,
+      "rules": 28,
+      "download_skipped": false,
+      "seconds": 1.256
+    }
+  ],
+  "run_url": "https://github.com/notb2-ai/geocat/actions/runs/41710877266"
+}
