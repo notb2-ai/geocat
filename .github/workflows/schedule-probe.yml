@@ -1,0 +1,20 @@
+name: GeoCat schedule probe
+run-name: "GeoCat · проверка расписания · ${{ github.event_name }}"
+
+on:
+  schedule:
+    - cron: "7,22,37,52 * * * *"
+
+permissions: {}
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 1
+    steps:
+      - name: Записать факт автоматического запуска
+        env:
+          SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          date -u '+UTC: %Y-%m-%d %H:%M:%S'
+          printf 'event=%s\nref=%s\nschedule=%s\n' "$GITHUB_EVENT_NAME" "$GITHUB_REF" "$SCHEDULE"
