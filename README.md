@@ -29,7 +29,7 @@
 
 <!-- categories:start -->
 <details>
-<summary>GeoSite — категорий: 15 — показать список</summary>
+<summary>GeoSite — категорий: 16 — показать список</summary>
 
 ```text
 ru-available-only-inside
@@ -47,6 +47,7 @@ mts-ru
 rostelecom
 t2-ru
 category-public-tracker
+private
 ```
 
 </details>
