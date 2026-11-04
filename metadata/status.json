@@ -1,8 +1,8 @@
 {
-  "checked_at": "2026-11-04T19:01:16+00:00",
-  "checked_at_moscow": "04.11.2026 22:01:16 МСК",
+  "checked_at": "2026-11-04T19:58:07+00:00",
+  "checked_at_moscow": "04.11.2026 22:58:07 МСК",
   "release": "202611041125",
-  "seconds": 0.125,
+  "seconds": 0.247,
   "files": [
     {
       "file": "geosite.dat",
