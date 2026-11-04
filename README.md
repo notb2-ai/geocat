@@ -5,9 +5,8 @@
 **[Статус обновлений](STATUS.md)**
 
 [![Автообновление баз](https://github.com/notb2-ai/geocat/actions/workflows/build.yml/badge.svg?branch=main&event=schedule)](https://github.com/notb2-ai/geocat/actions/workflows/build.yml?query=event%3Aschedule+branch%3Amain)
-[![Тест расписания](https://github.com/notb2-ai/geocat/actions/workflows/schedule-probe.yml/badge.svg?branch=main&event=schedule)](https://github.com/notb2-ai/geocat/actions/workflows/schedule-probe.yml?query=event%3Aschedule+branch%3Amain)
 
-Плашки показывают результат последнего запуска по расписанию; дата запуска — по нажатию.
+Плашка показывает результат последнего запуска по расписанию, а не свежесть баз; дата запуска — по нажатию.
 
 ## Скачать
 
