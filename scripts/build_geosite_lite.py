@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
-"""Build a lossless category subset of RunetFreedom geosite.dat (Xray/V2Ray protobuf).
+"""Lossless protobuf category filtering and bounded downloads for GeoCat.
 
 Standard-library only; for v2rayNG, preserve the output filename geosite.dat.
 Source: pinned latest RunetFreedom release and SHA-256 digest from GitHub API.
 """
 from __future__ import annotations
 
-import argparse
 import hashlib
-import json
 import os
 from pathlib import Path
 import tempfile
@@ -20,7 +18,6 @@ import time
 
 RELEASE_API = "https://api.github.com/repos/runetfreedom/russia-v2ray-rules-dat/releases/latest"
 MAX_SOURCE_BYTES = 160_000_000
-from category_config import read_categories
 
 
 
@@ -61,28 +58,6 @@ def download(url: str, max_bytes: int) -> bytes:
             print(f"Temporary download error ({type(exc).__name__}); retry {attempt+1}/3 in {delay}s", flush=True)
             time.sleep(delay)
     raise AssertionError("Unreachable")
-
-
-def fetch_latest_release() -> tuple[bytes, dict]:
-    release = json.loads(download(RELEASE_API, 1_000_000))
-    assets = {a["name"]: a for a in release["assets"]}
-    asset = assets["geosite.dat"]
-    data = download(asset["browser_download_url"], MAX_SOURCE_BYTES)
-    digest = asset.get("digest") or ""
-    if digest.startswith("sha256:"):
-        expected = digest.partition(":")[2].lower()
-    else:
-        checksums = download(assets["geosite.dat.sha256sum"]["browser_download_url"], 4096).decode()
-        expected = checksums.strip().split()[0].lower()
-    actual = hashlib.sha256(data).hexdigest()
-    if expected != actual:
-        raise ValueError(f"Upstream SHA-256 mismatch: expected {expected}, got {actual}")
-    return data, {
-        "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
-        "release_tag": release["tag_name"],
-        "published_at": release.get("published_at"),
-        "source_sha256": actual,
-    }
 
 
 def varint_read(buf: bytes, pos: int, end: int) -> tuple[int, int]:
@@ -196,40 +171,3 @@ def atomic_write(path: Path, data: bytes) -> None:
     finally:
         if os.path.exists(name):
             os.unlink(name)
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--input", type=Path, help="Local full RunetFreedom geosite.dat; otherwise download latest release")
-    parser.add_argument("--output", type=Path, default=Path("geosite.dat"), help="Path of slim geosite.dat")
-    parser.add_argument("--extra", action="append", default=[], help="Retain extra categories, e.g. --extra google or --extra cn")
-    args = parser.parse_args()
-
-    if args.input:
-        data = args.input.read_bytes()
-        if len(data) > MAX_SOURCE_BYTES:
-            raise ValueError("Input too large")
-        source = {"origin_file": str(args.input), "source_sha256": hashlib.sha256(data).hexdigest()}
-        if args.input.resolve() == args.output.resolve():
-            raise ValueError("Source and output paths must differ")
-    else:
-        data, source = fetch_latest_release()
-
-    from category_config import edit
-    wanted = edit(read_categories(Path(__file__).with_name('geosite-categories.txt'), 'geosite'),
-                  ' '.join(args.extra), '', 'geosite')
-    output, stats = trim(data, wanted)
-    atomic_write(args.output, output)
-    metadata = {**source, **stats}
-    atomic_write(args.output.with_suffix(args.output.suffix + ".json"),
-                 (json.dumps(metadata, indent=2, ensure_ascii=False) + "\n").encode())
-    print(f"OK: {args.output}: {len(data):,} -> {len(output):,} bytes; "
-          f"{100 * (1 - len(output) / len(data)):.4f}% smaller")
-    print("Preserved categories:", ", ".join(wanted))
-    print("SHA256:", stats["output_sha256"])
-
-
-if __name__ == "__main__":
-    main()
-
-

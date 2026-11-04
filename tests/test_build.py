@@ -6,9 +6,9 @@ import tempfile
 import unittest
 from unittest.mock import patch
 import urllib.error
-import build_all as b
-import build_geosite_lite as s
-import build_geoip_lite as g
+import scripts.build_all as b
+import scripts.build_geosite_lite as s
+import scripts.build_geoip_lite as g
 
 
 BASE_SITES = ('yandex', 'category-bank-ru', 'category-public-tracker')
@@ -49,7 +49,7 @@ class Builds(unittest.TestCase):
         self.run_build();self.release['tag_name']='202611031800';self.downloads=[]
         r=self.run_build();self.assertEqual(self.downloads,[b.RELEASE_API])
         self.assertTrue(all(x['state']=='source_updated' for x in r['files']))
-        self.assertEqual(json.loads((self.out/'geoip.dat.json').read_text())['release_tag'],'202611031800')
+        self.assertEqual(json.loads((self.out/'metadata'/'geoip.dat.json').read_text())['release_tag'],'202611031800')
     def test_corrupt_local_file_rebuilt(self):
         self.run_build();(self.out/'geosite.dat').write_bytes(b'broken');r=self.run_build()
         self.assertFalse(r['files'][0]['download_skipped']);self.assertTrue(r['files'][1]['download_skipped'])
@@ -62,10 +62,10 @@ class Builds(unittest.TestCase):
             r=self.run_build()
         self.assertTrue(all(not x['download_skipped'] for x in r['files']))
     def test_bad_checksum_does_not_write_either_file(self):
-        self.run_build();before={p.name:p.read_bytes() for p in self.out.iterdir()}
+        self.run_build();before={str(p.relative_to(self.out)):p.read_bytes() for p in self.out.rglob('*') if p.is_file()}
         self.source['geoip.dat']=b'broken'
         with self.assertRaises(ValueError):self.run_build(True)
-        self.assertEqual(before,{p.name:p.read_bytes() for p in self.out.iterdir()})
+        self.assertEqual(before,{str(p.relative_to(self.out)):p.read_bytes() for p in self.out.rglob('*') if p.is_file()})
     def test_changed_source_same_tag_is_rebuilt(self):
         self.run_build();self.source['geosite.dat']+=site('extra')
         a=self.release['assets'][0];a['size']=len(self.source['geosite.dat']);a['digest']='sha256:'+b.sha(self.source['geosite.dat'])
@@ -99,4 +99,3 @@ class Builds(unittest.TestCase):
             with self.assertRaises(ValueError):s.download('https://example.org',2)
 
 if __name__=='__main__':unittest.main()
-

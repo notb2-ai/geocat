@@ -6,10 +6,10 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-import build_all as b
-import build_geosite_lite as s
-import build_geoip_lite as g
-import category_config as c
+import scripts.build_all as b
+import scripts.build_geosite_lite as s
+import scripts.build_geoip_lite as g
+import scripts.category_config as c
 from test_build import BASE_SITES, field, site, private
 
 def geo(code, ip=b'\x01\x02\x03\x00', prefix=24, reverse=False):
@@ -120,7 +120,7 @@ class CategoryEdits(unittest.TestCase):
 
     def test_private_cidr_count_not_total(self):
         self.run_build({'geoip.dat': ('ru cn','')})
-        meta = json.loads((self.out/'geoip.dat.json').read_text())
+        meta = json.loads((self.out/'metadata'/'geoip.dat.json').read_text())
         self.assertEqual(meta['rule_count'], 3)
         self.assertEqual(meta['geoip_private_cidr_count'], 1)
 
@@ -143,7 +143,7 @@ class CategoryEdits(unittest.TestCase):
         self.assertEqual(before,self.snapshot())
 
     def test_readme_tracks_both_lists_and_failure_preserves_it(self):
-        readme = self.root/'README.md'
+        readme = self.out/'README.md'
         readme.write_text('Intro\n<!-- categories:start -->\n<!-- categories:end -->\nFooter\n')
         self.run_build({'geosite.dat': ('google',''), 'geoip.dat': ('ru cn','')})
         text = readme.read_text()
@@ -156,7 +156,7 @@ class CategoryEdits(unittest.TestCase):
 
     def test_bad_readme_markers_fail_before_writes(self):
         self.run_build()
-        (self.root/'README.md').write_text('Missing markers')
+        (self.out/'README.md').write_text('Missing markers')
         self.assert_no_write_on_error({'geoip.dat': ('ru','')})
 
     def test_cli_environment_then_schedule_without_inputs(self):
@@ -171,3 +171,20 @@ class CategoryEdits(unittest.TestCase):
         with patch.object(sys,'argv',argv), patch.dict(os.environ,{k:'' for k in env}), patch.object(b,'download',side_effect=self.download):
             b.main()
         self.assertEqual(self.downloads, [b.RELEASE_API])
+
+    def test_default_cli_uses_new_layout_and_reuses_metadata(self):
+        config = self.out/'config'
+        config.mkdir()
+        for filename in c.FILES.values():
+            (config/filename).write_bytes((self.root/filename).read_bytes())
+        (self.out/'README.md').write_text('Intro\n<!-- categories:start -->\n<!-- categories:end -->\n')
+        env = {f'{kind}_{op}'.upper(): '' for kind in ('geosite','geoip') for op in ('add','remove')}
+        with patch.object(b,'ROOT',self.out), patch.object(sys,'argv',['build_all.py']), patch.dict(os.environ,env), patch.object(b,'download',side_effect=self.download):
+            b.main()
+            self.assertEqual({p.name for p in self.out.iterdir() if p.is_file()},
+                             {'geosite.dat','geoip.dat','README.md','STATUS.md'})
+            self.assertEqual({p.name for p in (self.out/'metadata').iterdir()},
+                             {'geosite.dat.json','geoip.dat.json','status.json'})
+            self.downloads.clear()
+            b.main()
+            self.assertEqual(self.downloads,[b.RELEASE_API])

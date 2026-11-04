@@ -32,12 +32,8 @@ on:
   push:
     branches: [main]
     paths:
-      - "build_all.py"
-      - "build_geosite_lite.py"
-      - "build_geoip_lite.py"
-      - "category_config.py"
-      - "geosite-categories.txt"
-      - "geoip-categories.txt"
+      - "scripts/**"
+      - "config/**"
       - "tests/**"
       - ".github/workflows/build.yml"
 permissions:
@@ -71,16 +67,16 @@ jobs:
           PYTHONUNBUFFERED: "1"
         run: |
           if [ "$FORCE" = "true" ]; then
-            python3 build_all.py --force
+            python3 -m scripts.build_all --force
           else
-            python3 build_all.py
+            python3 -m scripts.build_all
           fi
       - name: Опубликовать базы и отчёт
         id: publish
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f geosite.dat geosite.dat.json geoip.dat geoip.dat.json STATUS.md status.json geosite-categories.txt geoip-categories.txt README.md
+          git add -f geosite.dat geoip.dat STATUS.md README.md metadata/geosite.dat.json metadata/geoip.dat.json metadata/status.json config/geosite-categories.txt config/geoip-categories.txt
           if git diff --cached --quiet; then
             echo "Результат уже опубликован."
             exit 0

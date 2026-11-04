@@ -10,10 +10,12 @@ from pathlib import Path
 import re
 import time
 
-from build_geosite_lite import (RELEASE_API, MAX_SOURCE_BYTES,
+from scripts.build_geosite_lite import (RELEASE_API, MAX_SOURCE_BYTES,
     atomic_write, download, parse_geosites, protobuf_fields, trim)
-from build_geoip_lite import verify_geoip
-from category_config import FILES, selections, render_catalog
+from scripts.build_geoip_lite import verify_geoip
+from scripts.category_config import FILES, selections, render_catalog
+
+ROOT = Path(__file__).resolve().parent.parent
 
 NAMES = ('geosite.dat', 'geoip.dat')
 ORIGIN = 'runetfreedom/russia-v2ray-rules-dat'
@@ -73,7 +75,7 @@ def build_one(name, release, assets, outdir, build_hash, force=False, *, wanted)
     if not 0 < asset['size'] <= MAX_SOURCE_BYTES:
         raise ValueError(f'{name}: invalid asset size')
     path = outdir / name
-    old_meta = read_json(outdir / (name + '.json'))
+    old_meta = read_json(outdir / 'metadata' / (name + '.json'))
     old = path.read_bytes() if path.exists() else b''
     old_hash = sha(old) if old else None
     reusable = (not force and old_meta.get('builder_sha256') == build_hash
@@ -128,9 +130,9 @@ def render_report(report):
 
 
 def run(outdir, force=False, config_dir=None, changes=None):
-    config_dir = Path(config_dir) if config_dir is not None else Path(__file__).resolve().parent
+    config_dir = Path(config_dir) if config_dir is not None else ROOT / 'config'
     selected = selections(config_dir, changes)
-    readme_path = config_dir / 'README.md'
+    readme_path = outdir / 'README.md'
     readme = render_catalog(readme_path.read_text(encoding='utf-8'), selected) if readme_path.exists() else None
     started = time.monotonic()
     print('Checking latest RunetFreedom release once for both databases...', flush=True)
@@ -149,7 +151,7 @@ def run(outdir, force=False, config_dir=None, changes=None):
     for name, (output, meta, _) in zip(NAMES, results):
         if not (outdir / name).exists() or (outdir / name).read_bytes() != output:
             atomic_write(outdir / name, output)
-        atomic_write(outdir / (name + '.json'), encoded(meta))
+        atomic_write(outdir / 'metadata' / (name + '.json'), encoded(meta))
     for name, filename in FILES.items():
         atomic_write(config_dir / filename, ('\n'.join(selected[name]) + '\n').encode())
     if readme is not None:
@@ -159,16 +161,16 @@ def run(outdir, force=False, config_dir=None, changes=None):
                   checked_at_moscow=now.astimezone(timezone(timedelta(hours=3))).strftime('%d.%m.%Y %H:%M:%S МСК'),
                   release=release['tag_name'], seconds=round(time.monotonic()-started, 3),
                   files=[r[2] for r in results])
-    atomic_write(outdir / 'status.json', encoded(report))
+    atomic_write(outdir / 'metadata' / 'status.json', encoded(report))
     atomic_write(outdir / 'STATUS.md', render_report(report).encode())
     print(f'Both databases verified successfully in {report["seconds"]}s. Publication is the next workflow step.', flush=True)
     return report
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output-dir', type=Path, default=Path('.'))
+    parser.add_argument('--output-dir', type=Path, default=ROOT)
     parser.add_argument('--force', action='store_true', help='Download and rebuild even when cached outputs match')
-    parser.add_argument('--config-dir', type=Path, default=Path(__file__).resolve().parent)
+    parser.add_argument('--config-dir', type=Path, default=ROOT / 'config')
     for kind in ('geosite', 'geoip'):
         for operation in ('add', 'remove'):
             parser.add_argument(f'--{kind}-{operation}', default=os.environ.get(f'{kind}_{operation}'.upper(), ''))
@@ -182,4 +184,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
