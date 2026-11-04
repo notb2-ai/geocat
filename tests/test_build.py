@@ -11,6 +11,8 @@ import build_geosite_lite as s
 import build_geoip_lite as g
 
 
+BASE_SITES = ('yandex', 'category-bank-ru', 'category-public-tracker')
+
 def field(n, value):
     return s.varint_write(n * 8 + 2) + s.varint_write(len(value)) + value
 
@@ -25,7 +27,9 @@ class Builds(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory(); self.addCleanup(self.tmp.cleanup)
         self.out = Path(self.tmp.name)
-        self.source = {'geosite.dat': b''.join(site(c) for c in s.CATEGORIES), 'geoip.dat': private()}
+        (self.out/'geosite-categories.txt').write_text('\n'.join(BASE_SITES)+'\n')
+        (self.out/'geoip-categories.txt').write_text('private\n')
+        self.source = {'geosite.dat': b''.join(site(c) for c in BASE_SITES), 'geoip.dat': private()}
         self.release = {'tag_name':'202611031113', 'published_at':'2026-11-03T11:14:55Z', 'assets':[
             {'name':n, 'id':k, 'size':len(v), 'digest':'sha256:'+b.sha(v), 'browser_download_url':'https://example.org/'+n}
             for k,(n,v) in enumerate(self.source.items(),1)]}
@@ -35,7 +39,7 @@ class Builds(unittest.TestCase):
         if url==b.RELEASE_API:return json.dumps(self.release).encode()
         return self.source[url.rsplit('/',1)[-1]]
     def run_build(self,force=False):
-        with patch.object(b,'download',side_effect=self.download):return b.run(self.out,force)
+        with patch.object(b,'download',side_effect=self.download):return b.run(self.out,force,config_dir=self.out)
     def test_rebuild_then_skip_and_single_release_request(self):
         first=self.run_build();self.assertTrue(all(r['state']=='updated' for r in first['files']))
         self.downloads=[];second=self.run_build()
@@ -95,3 +99,4 @@ class Builds(unittest.TestCase):
             with self.assertRaises(ValueError):s.download('https://example.org',2)
 
 if __name__=='__main__':unittest.main()
+

@@ -20,23 +20,9 @@ import time
 
 RELEASE_API = "https://api.github.com/repos/runetfreedom/russia-v2ray-rules-dat/releases/latest"
 MAX_SOURCE_BYTES = 160_000_000
-CATEGORIES = (
-    "ru-available-only-inside",
-    "category-bank-ru",
-    "category-ecommerce-ru",
-    "category-retail-ru",
-    "category-entertainment-ru",
-    "yandex",
-    "mailru-group",
-    "category-ai-ru",
-    "category-medicine-ru",
-    "category-travel-ru",
-    "megafon",
-    "mts-ru",
-    "rostelecom",
-    "t2-ru",
-    "category-public-tracker",  # existing tracker-block rule
-)
+from category_config import read_categories
+
+
 
 
 def download(url: str, max_bytes: int) -> bytes:
@@ -229,7 +215,9 @@ def main() -> None:
     else:
         data, source = fetch_latest_release()
 
-    wanted = tuple(dict.fromkeys(CATEGORIES + tuple(x.strip().lower() for x in args.extra)))
+    from category_config import edit
+    wanted = edit(read_categories(Path(__file__).with_name('geosite-categories.txt'), 'geosite'),
+                  ' '.join(args.extra), '', 'geosite')
     output, stats = trim(data, wanted)
     atomic_write(args.output, output)
     metadata = {**source, **stats}
@@ -243,4 +231,5 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 

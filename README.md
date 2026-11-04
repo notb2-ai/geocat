@@ -8,8 +8,8 @@
 
 | Файл | Состав |
 |---|---|
-| [geosite.dat](https://raw.githubusercontent.com/notb2-ai/geocat/main/geosite.dat) | 15 выбранных категорий |
-| [geoip.dat](https://raw.githubusercontent.com/notb2-ai/geocat/main/geoip.dat) | Только `private` |
+| [geosite.dat](https://raw.githubusercontent.com/notb2-ai/geocat/main/geosite.dat) | Выбранные категории сайтов |
+| [geoip.dat](https://raw.githubusercontent.com/notb2-ai/geocat/main/geoip.dat) | Выбранные категории IP |
 
 ## Подключить в v2rayNG
 
@@ -25,10 +25,11 @@
 
 На телефоне обновляй файлы через **Asset files → ☁️**. Отсутствие изменений — нормальный результат: выбранные категории могут остаться прежними.
 
-## Категории GeoSite
+## Состав баз
 
+<!-- categories:start -->
 <details>
-<summary>Показать все 15 категорий</summary>
+<summary>GeoSite — категорий: 15 — показать список</summary>
 
 ```text
 ru-available-only-inside
@@ -50,9 +51,19 @@ category-public-tracker
 
 </details>
 
-Базы содержат только перечисленные категории и `geoip:private`. Для правил, использующих другие категории, нужна полная база или расширение состава GeoCat.
+<details>
+<summary>GeoIP — категорий: 1 — показать список</summary>
 
-Направления direct/proxy/block задаются в клиенте. Явные правила `domain:beeline.ru` и `domain:dom.ru` также остаются в клиенте.
+```text
+private
+```
+
+</details>
+<!-- categories:end -->
+
+Состав хранится в [списке GeoSite](geosite-categories.txt) и [списке GeoIP](geoip-categories.txt). Категории сохраняются при ежедневном обновлении.
+
+Направления direct/proxy/block задаются в клиенте. Все категории, используемые его правилами, должны присутствовать в соответствующей базе.
 
 ## Источники
 

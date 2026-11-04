@@ -5,13 +5,15 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone, timedelta
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import time
 
-from build_geosite_lite import (CATEGORIES, RELEASE_API, MAX_SOURCE_BYTES,
+from build_geosite_lite import (RELEASE_API, MAX_SOURCE_BYTES,
     atomic_write, download, parse_geosites, protobuf_fields, trim)
-from build_geoip_lite import verify_private_geoip
+from build_geoip_lite import verify_geoip
+from category_config import FILES, selections, render_catalog
 
 NAMES = ('geosite.dat', 'geoip.dat')
 ORIGIN = 'runetfreedom/russia-v2ray-rules-dat'
@@ -25,7 +27,7 @@ def encoded(obj):
 def fingerprint():
     root = Path(__file__).resolve().parent
     h = hashlib.sha256()
-    for name in ('build_all.py', 'build_geosite_lite.py', 'build_geoip_lite.py'):
+    for name in ('build_all.py', 'build_geosite_lite.py', 'build_geoip_lite.py', 'category_config.py'):
         h.update(name.encode()); h.update((root / name).read_bytes())
     return h.hexdigest()
 
@@ -46,7 +48,7 @@ def validate(name, data, wanted):
         if not counts[code]:
             raise ValueError(f'{name}: empty category {code}')
     if name == 'geoip.dat':
-        verify_private_geoip(data)
+        verify_geoip(data, wanted)
     return counts
 
 def expected_hash(asset, assets, name):
@@ -64,10 +66,9 @@ def expected_hash(asset, assets, name):
         raise ValueError(f'{name}: invalid upstream SHA-256')
     return value
 
-def build_one(name, release, assets, outdir, build_hash, force=False):
+def build_one(name, release, assets, outdir, build_hash, force=False, *, wanted):
     started = time.monotonic()
     asset = assets[name]
-    wanted = CATEGORIES if name == 'geosite.dat' else ('private',)
     expected = expected_hash(asset, assets, name)
     if not 0 < asset['size'] <= MAX_SOURCE_BYTES:
         raise ValueError(f'{name}: invalid asset size')
@@ -104,7 +105,7 @@ def build_one(name, release, assets, outdir, build_hash, force=False):
                 source_asset_id=asset['id'], builder_sha256=build_hash,
                 category_counts=counts, rule_count=sum(counts.values()))
     if name == 'geoip.dat':
-        meta['geoip_private_cidr_count'] = sum(counts.values())
+        meta['geoip_private_cidr_count'] = counts.get('private', 0)
     changed = output != old
     state = 'updated' if changed else ('source_updated' if old_meta.get('release_tag') != release['tag_name'] else 'unchanged')
     row = dict(file=name, state=state, previous_release=old_meta.get('release_tag'),
@@ -126,7 +127,11 @@ def render_report(report):
     return '\n'.join(lines) + '\n'
 
 
-def run(outdir, force=False):
+def run(outdir, force=False, config_dir=None, changes=None):
+    config_dir = Path(config_dir) if config_dir is not None else Path(__file__).resolve().parent
+    selected = selections(config_dir, changes)
+    readme_path = config_dir / 'README.md'
+    readme = render_catalog(readme_path.read_text(encoding='utf-8'), selected) if readme_path.exists() else None
     started = time.monotonic()
     print('Checking latest RunetFreedom release once for both databases...', flush=True)
     release = json.loads(download(RELEASE_API, 1_000_000))
@@ -138,13 +143,17 @@ def run(outdir, force=False):
     build_hash = fingerprint()
     print(f'Pinned upstream release: {release["tag_name"]}', flush=True)
     with ThreadPoolExecutor(max_workers=2) as pool:
-        futures = [pool.submit(build_one, n, release, assets, outdir, build_hash, force) for n in NAMES]
+        futures = [pool.submit(build_one, n, release, assets, outdir, build_hash, force, wanted=selected[n]) for n in NAMES]
         results = [f.result() for f in futures]
     # No output is written until BOTH databases have passed all validation.
     for name, (output, meta, _) in zip(NAMES, results):
         if not (outdir / name).exists() or (outdir / name).read_bytes() != output:
             atomic_write(outdir / name, output)
         atomic_write(outdir / (name + '.json'), encoded(meta))
+    for name, filename in FILES.items():
+        atomic_write(config_dir / filename, ('\n'.join(selected[name]) + '\n').encode())
+    if readme is not None:
+        atomic_write(readme_path, readme.encode())
     now = datetime.now(timezone.utc)
     report = dict(checked_at=now.isoformat(timespec='seconds'),
                   checked_at_moscow=now.astimezone(timezone(timedelta(hours=3))).strftime('%d.%m.%Y %H:%M:%S МСК'),
@@ -159,8 +168,18 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output-dir', type=Path, default=Path('.'))
     parser.add_argument('--force', action='store_true', help='Download and rebuild even when cached outputs match')
+    parser.add_argument('--config-dir', type=Path, default=Path(__file__).resolve().parent)
+    for kind in ('geosite', 'geoip'):
+        for operation in ('add', 'remove'):
+            parser.add_argument(f'--{kind}-{operation}', default=os.environ.get(f'{kind}_{operation}'.upper(), ''))
     args = parser.parse_args()
-    run(args.output_dir, args.force)
+    changes = {kind + '.dat': (getattr(args, kind + '_add'), getattr(args, kind + '_remove'))
+               for kind in ('geosite', 'geoip')}
+    try:
+        run(args.output_dir, args.force, args.config_dir, changes)
+    except (ValueError, OSError) as exc:
+        parser.exit(1, f'Ошибка: {exc}\n')
 
 if __name__ == '__main__':
     main()
+

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build a verified GeoIPList containing only PRIVATE from RunetFreedom.
+"""Build a verified GeoIPList with selected RunetFreedom categories.
 
 GeoIPList and GeoSiteList share the same protobuf entry/code envelope.
 The existing geosite subset builder copies encoded entries byte-for-byte;
@@ -21,42 +21,50 @@ from build_geosite_lite import (
 )
 
 
+def verify_geoip(dat: bytes, wanted) -> dict[str, int]:
+    """Validate selected IPv4/IPv6 CIDRs without altering encoded entries."""
+    from build_geosite_lite import parse_geosites
+    entries = parse_geosites(dat)
+    if set(entries) != set(wanted):
+        raise ValueError("Unexpected GeoIP categories")
+    counts = {}
+    for code, entry in entries.items():
+        count, reverse_flags = 0, []
+        for number, wire, start, end, _, _ in protobuf_fields(entry):
+            if number in (1, 2, 3) and wire != {1: 2, 2: 2, 3: 0}[number]:
+                raise ValueError("Invalid GeoIP field type")
+            if number == 2:
+                cidr = entry[start:end]
+                addresses, prefixes = [], []
+                for fn, fw, vs, ve, _, _ in protobuf_fields(cidr):
+                    if fn in (1, 2) and fw != {1: 2, 2: 0}[fn]:
+                        raise ValueError("Invalid CIDR field type")
+                    if fn == 1:
+                        addresses.append(cidr[vs:ve])
+                    elif fn == 2:
+                        prefixes.append(varint_read(cidr, vs, ve)[0])
+                if len(addresses) != 1 or len(prefixes) > 1:
+                    raise ValueError("Malformed GeoIP CIDR")
+                prefix = prefixes[0] if prefixes else 0
+                if len(addresses[0]) not in (4, 16) or prefix > len(addresses[0]) * 8:
+                    raise ValueError("Invalid GeoIP CIDR prefix or IP")
+                if code == 'private' and prefix == 0:
+                    raise ValueError("Default route /0 is not allowed in PRIVATE")
+                count += 1
+            elif number == 3:
+                reverse_flags.append(varint_read(entry, start, end)[0])
+        if len(reverse_flags) > 1 or any(v not in (0, 1) for v in reverse_flags):
+            raise ValueError("Invalid reverse_match")
+        if code == 'private' and any(reverse_flags):
+            raise ValueError("Unexpected reverse_match in PRIVATE")
+        if not count:
+            raise ValueError(f"Empty GeoIP category: {code}")
+        counts[code] = count
+    return counts
+
+
 def verify_private_geoip(dat: bytes) -> int:
-    """Check output is a one-entry, non-reverse PRIVATE GeoIPList with valid CIDRs."""
-    entries = list(protobuf_fields(dat))
-    if len(entries) != 1 or entries[0][0:2] != (1, 2):
-        raise ValueError("Expected exactly one GeoIPList entry")
-    _, _, start, end, _, _ = entries[0]
-    entry = dat[start:end]
-    codes = []
-    count = 0
-    for number, wire, start, end, _, _ in protobuf_fields(entry):
-        if number == 1 and wire == 2:
-            codes.append(entry[start:end].decode("utf-8").lower())
-        elif number == 2 and wire == 2:
-            cidr = entry[start:end]
-            addresses, prefixes = [], []
-            for fn, fw, vs, ve, _, _ in protobuf_fields(cidr):
-                if fn == 1 and fw == 2:
-                    addresses.append(cidr[vs:ve])
-                elif fn == 2 and fw == 0:
-                    val, _ = varint_read(cidr, vs, ve)
-                    prefixes.append(val)
-            if len(addresses) != 1 or len(prefixes) > 1:
-                raise ValueError("Malformed GeoIP CIDR")
-            prefix = prefixes[0] if prefixes else 0  # proto3 default
-            if len(addresses[0]) not in (4, 16) or prefix > len(addresses[0]) * 8:
-                raise ValueError("Invalid GeoIP CIDR prefix or IP")
-            if prefix == 0:
-                raise ValueError("Default route /0 is not allowed in PRIVATE")
-            count += 1
-        elif number == 3 and wire == 0:
-            reversed_match, _ = varint_read(entry, start, end)
-            if reversed_match:
-                raise ValueError("Unexpected reverse_match in PRIVATE category")
-    if codes != ["private"] or count == 0:
-        raise ValueError("Output must contain non-empty PRIVATE GeoIP category only")
-    return count
+    return verify_geoip(dat, ('private',))['private']
 
 
 def main():
@@ -90,22 +98,28 @@ def main():
             "published_at": release.get("published_at"),
         }
 
-    output, stats = trim(source, ("private",))
-    cidr_count = verify_private_geoip(output)
+    from category_config import read_categories
+    wanted = read_categories(Path(__file__).with_name('geoip-categories.txt'), 'geoip')
+    output, stats = trim(source, wanted)
+    counts = verify_geoip(output, wanted)
+    cidr_count = counts.get('private', 0)
     atomic_write(args.output, output)
     metadata.update({
         **stats,
         "geoip_private_cidr_count": cidr_count,
+        "category_counts": counts,
+        "rule_count": sum(counts.values()),
         "source_sha256": hashlib.sha256(source).hexdigest()
     })
     atomic_write(
         args.output.with_suffix(args.output.suffix + ".json"),
         (json.dumps(metadata, indent=2, ensure_ascii=False) + "\n").encode(),
     )
-    print(f"OK: {args.output} {len(source):,} -> {len(output):,} bytes, {cidr_count} private CIDRs")
+    print(f"OK: {args.output} {len(source):,} -> {len(output):,} bytes, {sum(counts.values())} CIDRs across {len(counts)} categories")
     print("SHA256:", stats["output_sha256"])
 
 
 if __name__ == "__main__":
     main()
+
 

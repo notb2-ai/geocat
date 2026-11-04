@@ -1,0 +1,15 @@
+ru-available-only-inside
+category-bank-ru
+category-ecommerce-ru
+category-retail-ru
+category-entertainment-ru
+yandex
+mailru-group
+category-ai-ru
+category-medicine-ru
+category-travel-ru
+megafon
+mts-ru
+rostelecom
+t2-ru
+category-public-tracker

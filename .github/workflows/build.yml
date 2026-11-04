@@ -5,6 +5,26 @@ on:
     - cron: "30 12 * * *"
   workflow_dispatch:
     inputs:
+      geosite_add:
+        description: "Добавить GeoSite: категории через пробел или запятую"
+        type: string
+        required: false
+        default: ""
+      geosite_remove:
+        description: "Удалить GeoSite: категории через пробел или запятую"
+        type: string
+        required: false
+        default: ""
+      geoip_add:
+        description: "Добавить GeoIP: категории через пробел или запятую"
+        type: string
+        required: false
+        default: ""
+      geoip_remove:
+        description: "Удалить GeoIP: категории через пробел или запятую"
+        type: string
+        required: false
+        default: ""
       force:
         description: "Принудительно скачать и пересобрать обе базы"
         type: boolean
@@ -15,6 +35,9 @@ on:
       - "build_all.py"
       - "build_geosite_lite.py"
       - "build_geoip_lite.py"
+      - "category_config.py"
+      - "geosite-categories.txt"
+      - "geoip-categories.txt"
       - "tests/**"
       - ".github/workflows/build.yml"
 permissions:
@@ -22,6 +45,7 @@ permissions:
 concurrency:
   group: geocat-publish
   cancel-in-progress: false
+  queue: max
 jobs:
   build:
     runs-on: ubuntu-24.04
@@ -40,6 +64,10 @@ jobs:
         timeout-minutes: 10
         env:
           FORCE: ${{ inputs.force }}
+          GEOSITE_ADD: ${{ inputs.geosite_add }}
+          GEOSITE_REMOVE: ${{ inputs.geosite_remove }}
+          GEOIP_ADD: ${{ inputs.geoip_add }}
+          GEOIP_REMOVE: ${{ inputs.geoip_remove }}
           PYTHONUNBUFFERED: "1"
         run: |
           if [ "$FORCE" = "true" ]; then
@@ -52,12 +80,12 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f geosite.dat geosite.dat.json geoip.dat geoip.dat.json STATUS.md status.json
+          git add -f geosite.dat geosite.dat.json geoip.dat geoip.dat.json STATUS.md status.json geosite-categories.txt geoip-categories.txt README.md
           if git diff --cached --quiet; then
             echo "Результат уже опубликован."
             exit 0
           fi
-          git commit -m "chore: record GeoCat database check"
+          git commit -m "chore: update GeoCat databases and category selection"
           for attempt in 1 2 3; do
             if git push origin HEAD:main; then
               echo "Базы и отчёт успешно опубликованы."
