@@ -10,8 +10,6 @@
 
 ## Скачать
 
-Скопируй URL кнопкой справа в блоке.
-
 **[geosite.dat](https://raw.githubusercontent.com/notb2-ai/geocat/main/geosite.dat)**
 
 ```text
