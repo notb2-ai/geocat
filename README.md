@@ -4,6 +4,8 @@
 
 **[Статус обновлений](STATUS.md)**
 
+[![GeoCat schedule probe](https://github.com/notb2-ai/geocat/actions/workflows/schedule-probe.yml/badge.svg?event=check_run)](https://github.com/notb2-ai/geocat/actions/workflows/schedule-probe.yml)
+
 ## Скачать
 
 | Файл | Состав |
