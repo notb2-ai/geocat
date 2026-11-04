@@ -10,15 +10,24 @@
 
 ## Скачать
 
-| Файл | Состав |
-|---|---|
-| [geosite.dat](https://raw.githubusercontent.com/notb2-ai/geocat/main/geosite.dat) | Выбранные категории сайтов |
-| [geoip.dat](https://raw.githubusercontent.com/notb2-ai/geocat/main/geoip.dat) | Выбранные категории IP |
+Скопируй URL кнопкой справа в блоке.
+
+**[geosite.dat](https://raw.githubusercontent.com/notb2-ai/geocat/main/geosite.dat)**
+
+```text
+https://raw.githubusercontent.com/notb2-ai/geocat/main/geosite.dat
+```
+
+**[geoip.dat](https://raw.githubusercontent.com/notb2-ai/geocat/main/geoip.dat)**
+
+```text
+https://raw.githubusercontent.com/notb2-ai/geocat/main/geoip.dat
+```
 
 ## Подключить в v2rayNG
 
 1. Открой **Asset files → + → URL**.
-2. Добавь ссылки из таблицы с именами **geosite.dat** и **geoip.dat**.
+2. Добавь ссылки выше с именами **geosite.dat** и **geoip.dat**.
 3. Нажми **☁️**, дождись загрузки и переподключи VPN.
 
 Если источники уже добавлены, достаточно заменить их URL. Штатный **geoip-only-cn-private.dat** оставь без изменений.
