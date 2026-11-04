@@ -3,7 +3,7 @@ run-name: "GeoCat · проверка расписания · ${{ github.event_n
 
 on:
   schedule:
-    - cron: "7,22,37,52 * * * *"
+    - cron: "8,23,38,53 * * * *"
 
 permissions: {}
 
