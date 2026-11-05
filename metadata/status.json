@@ -1,8 +1,8 @@
 {
-  "checked_at": "2026-11-05T13:19:49+00:00",
-  "checked_at_moscow": "05.11.2026 16:19:49 МСК",
+  "checked_at": "2026-11-05T20:14:18+00:00",
+  "checked_at_moscow": "05.11.2026 23:14:18 МСК",
   "release": "202611051123",
-  "seconds": 0.251,
+  "seconds": 0.183,
   "files": [
     {
       "file": "geosite.dat",
@@ -14,7 +14,7 @@
       "bytes": 41173,
       "rules": 1988,
       "download_skipped": true,
-      "seconds": 0.002
+      "seconds": 0.004
     },
     {
       "file": "geoip.dat",
@@ -26,7 +26,7 @@
       "bytes": 436,
       "rules": 28,
       "download_skipped": true,
-      "seconds": 0.0
+      "seconds": 0.001
     }
   ]
 }
