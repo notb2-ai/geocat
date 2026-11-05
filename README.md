@@ -80,7 +80,7 @@ private
 </details>
 <!-- categories:end -->
 
-Состав хранится в [списке GeoSite](config/geosite-categories.txt) и [списке GeoIP](config/geoip-categories.txt). Категории сохраняются при ежедневном обновлении.
+Состав хранится в [списке GeoSite](config/geosite-categories.txt) и [списке GeoIP](config/geoip-categories.txt). Категории сохраняются при обновлении.
 
 Направления direct/proxy/block задаются в клиенте. Все категории, используемые его правилами, должны присутствовать в соответствующей базе.
 
