@@ -13,7 +13,6 @@
 [![Last Update](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnotb2-ai%2Fgeocat%2Fmain%2Fmetadata%2Fstatus.json&query=%24.checked_at_moscow&label=Last%20Update&color=blue)](https://github.com/notb2-ai/geocat/blob/main/STATUS.md)
 [![Last Trigger](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.github.com%2Frepos%2Fnotb2-ai%2Fgeocat%2Factions%2Fworkflows%2Fbuild.yml%2Fruns%3Fper_page%3D1&query=%24.workflow_runs%5B0%5D.event&label=Last%20Trigger&color=blue)](https://github.com/notb2-ai/geocat/actions/workflows/build.yml)
 
-
 [![GeoSite](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnotb2-ai%2Fgeocat%2Fmain%2Fmetadata%2Fgeosite.dat.json&query=%24.rule_count&label=GeoSite&suffix=%20rules&color=blue)](https://github.com/notb2-ai/geocat/blob/main/metadata/geosite.dat.json)
 [![GeoIP](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnotb2-ai%2Fgeocat%2Fmain%2Fmetadata%2Fgeoip.dat.json&query=%24.rule_count&label=GeoIP&suffix=%20CIDR&color=blue)](https://github.com/notb2-ai/geocat/blob/main/metadata/geoip.dat.json)
 [![GeoSite Size](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnotb2-ai%2Fgeocat%2Fmain%2Fmetadata%2Fgeosite.dat.json&query=%24.output_bytes&label=GeoSite%20Size&suffix=%20B&color=blue)](https://github.com/notb2-ai/geocat/blob/main/geosite.dat)
