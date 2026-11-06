@@ -14,3 +14,4 @@ rostelecom
 t2-ru
 category-public-tracker
 private
+category-education-ru
