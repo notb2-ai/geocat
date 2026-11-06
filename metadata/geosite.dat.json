@@ -16,12 +16,11 @@
     "rostelecom",
     "t2-ru",
     "category-public-tracker",
-    "private",
     "category-education-ru"
   ],
   "source_bytes": 86325094,
-  "output_bytes": 41582,
-  "output_sha256": "244938f8bf3bb9cc636eda3e5d14a390643ba0d69102f4cb2f27732250f3bbe4",
+  "output_bytes": 38365,
+  "output_sha256": "9375846bb034c12e11b3a1be60b61d456126b0f09678591348ca0604decb43a0",
   "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
   "release_tag": "202611061122",
   "published_at": "2026-11-06T11:23:02Z",
@@ -44,8 +43,7 @@
     "rostelecom": 9,
     "t2-ru": 3,
     "category-public-tracker": 437,
-    "private": 133,
     "category-education-ru": 20
   },
-  "rule_count": 2008
+  "rule_count": 1875
 }
