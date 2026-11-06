@@ -14,6 +14,7 @@ from scripts.build_geosite_lite import (RELEASE_API, MAX_SOURCE_BYTES,
     atomic_write, download, parse_geosites, protobuf_fields, trim)
 from scripts.build_geoip_lite import verify_geoip
 from scripts.category_config import FILES, selections, render_catalog
+from scripts.diff_inspector import diff_file, render_diffs
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -118,7 +119,7 @@ def build_one(name, release, assets, outdir, build_hash, force=False, *, wanted)
           f'{len(output):,} bytes; SHA256 {row["sha256"]}; {row["seconds"]}s', flush=True)
     return output, meta, row
 
-def render_report(report):
+def render_report(report, diffs=()):
     labels = {'updated': '🆕 Обновлён', 'source_updated': '✅ Проверен — изменений нет', 'unchanged': '✅ Проверен — изменений нет'}
     lines = ['# GeoCat — статус обновлений', '',
              f'Последняя успешная проверка: **{report["checked_at_moscow"]}**.', '',
@@ -126,6 +127,7 @@ def render_report(report):
              '|---|---|']
     for r in report['files']:
         lines.append(f'| {r["file"]} | {labels[r["state"]]} |')
+    lines.extend(render_diffs(diffs))
     return '\n'.join(lines) + '\n'
 
 
@@ -147,6 +149,17 @@ def run(outdir, force=False, config_dir=None, changes=None):
     with ThreadPoolExecutor(max_workers=2) as pool:
         futures = [pool.submit(build_one, n, release, assets, outdir, build_hash, force, wanted=selected[n]) for n in NAMES]
         results = [f.result() for f in futures]
+    # Observe-only: diff errors do not block verified database publication.
+    # Run before writing outputs so existing files remain the baseline.
+    diffs = []
+    for name, (output, _meta, _row) in zip(NAMES, results):
+        try:
+            path = outdir / name
+            previous = path.read_bytes() if path.exists() else b''
+            diffs.append(diff_file(name, previous, output))
+        except Exception as exc:
+            print(f'::warning::{name}: Diff Inspector unavailable: {type(exc).__name__}', flush=True)
+            diffs.append({'file': name, 'state': 'unavailable'})
     # No output is written until BOTH databases have passed all validation.
     for name, (output, meta, _) in zip(NAMES, results):
         if not (outdir / name).exists() or (outdir / name).read_bytes() != output:
@@ -162,7 +175,7 @@ def run(outdir, force=False, config_dir=None, changes=None):
                   release=release['tag_name'], seconds=round(time.monotonic()-started, 3),
                   files=[r[2] for r in results])
     atomic_write(outdir / 'metadata' / 'status.json', encoded(report))
-    atomic_write(outdir / 'STATUS.md', render_report(report).encode())
+    atomic_write(outdir / 'STATUS.md', render_report(report, diffs).encode())
     print(f'Both databases verified successfully in {report["seconds"]}s. Publication is the next workflow step.', flush=True)
     return report
 
