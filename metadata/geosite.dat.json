@@ -15,16 +15,18 @@
     "mts-ru",
     "rostelecom",
     "t2-ru",
-    "category-public-tracker"
+    "category-public-tracker",
+    "category-forums-ru",
+    "private"
   ],
-  "source_bytes": 86325094,
-  "output_bytes": 37956,
-  "output_sha256": "6fc873f36b4e124a6a56de1207a19df67fa151b50bed1bdb4d573074d01a4316",
+  "source_bytes": 86334210,
+  "output_bytes": 41367,
+  "output_sha256": "4a55f1140c56bf4aab34a5515c500e3580512c908e98f97e6857a1afd6b7b879",
   "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
-  "release_tag": "202611061122",
-  "published_at": "2026-11-06T11:23:02Z",
-  "source_sha256": "70778269b98fc109a2e4d201e416afcff4e22dca182c5356033047f58d04d05f",
-  "source_asset_id": 716922485,
+  "release_tag": "202611062059",
+  "published_at": "2026-11-06T21:00:14Z",
+  "source_sha256": "c144b3207299765659a5afce73e8cf9ffcb0970553b55b58485939eaa3b2c460",
+  "source_asset_id": 718546363,
   "builder_sha256": "42551c1d7a526d91ad5cc63a84e52043410a1a81220bbcc58b381046f1a2519a",
   "category_counts": {
     "ru-available-only-inside": 170,
@@ -41,7 +43,9 @@
     "mts-ru": 13,
     "rostelecom": 9,
     "t2-ru": 3,
-    "category-public-tracker": 437
+    "category-public-tracker": 437,
+    "category-forums-ru": 11,
+    "private": 133
   },
-  "rule_count": 1855
+  "rule_count": 1999
 }

@@ -13,3 +13,5 @@ mts-ru
 rostelecom
 t2-ru
 category-public-tracker
+category-forums-ru
+private

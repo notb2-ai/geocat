@@ -55,7 +55,7 @@ https://raw.githubusercontent.com/notb2-ai/geocat/main/geoip.dat
 
 <!-- categories:start -->
 <details>
-<summary>GeoSite — категорий: 15 — показать список</summary>
+<summary>GeoSite — категорий: 17 — показать список</summary>
 
 ```text
 ru-available-only-inside
@@ -73,6 +73,8 @@ mts-ru
 rostelecom
 t2-ru
 category-public-tracker
+category-forums-ru
+private
 ```
 
 </details>
