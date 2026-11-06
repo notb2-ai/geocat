@@ -13,4 +13,3 @@ mts-ru
 rostelecom
 t2-ru
 category-public-tracker
-category-education-ru
