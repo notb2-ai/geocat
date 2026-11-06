@@ -56,7 +56,7 @@ https://raw.githubusercontent.com/notb2-ai/geocat/main/geoip.dat
 
 <!-- categories:start -->
 <details>
-<summary>GeoSite — категорий: 17 — показать список</summary>
+<summary>GeoSite — категорий: 16 — показать список</summary>
 
 ```text
 ru-available-only-inside
@@ -75,7 +75,6 @@ rostelecom
 t2-ru
 category-public-tracker
 private
-category-education-ru
 ```
 
 </details>
