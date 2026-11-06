@@ -119,7 +119,32 @@ def build_one(name, release, assets, outdir, build_hash, force=False, *, wanted)
           f'{len(output):,} bytes; SHA256 {row["sha256"]}; {row["seconds"]}s', flush=True)
     return output, meta, row
 
-def render_report(report, diffs=()):
+LAST_CHANGE_PREFIX = '**Последнее изменение правил:** '
+
+def last_change_line(previous_status, diffs, checked_at):
+    changes = []
+    labels = {'geosite.dat': 'GeoSite', 'geoip.dat': 'GeoIP'}
+    for diff in diffs:
+        if diff['state'] != 'changed':
+            continue
+        counts = []
+        if diff['added']:
+            counts.append(f"+{diff['added']}")
+        if diff['removed']:
+            counts.append(f"−{diff['removed']}")
+        changes.append(f"{labels[diff['file']]} {' / '.join(counts)}")
+    if not changes:
+        return next((line for line in previous_status.splitlines()
+                     if line.startswith(LAST_CHANGE_PREFIX)), '')
+    label = ' · '.join([checked_at, *changes])
+    repo = os.environ.get('GITHUB_REPOSITORY')
+    run_id = os.environ.get('GITHUB_RUN_ID')
+    if repo and run_id:
+        server = os.environ.get('GITHUB_SERVER_URL', 'https://github.com').rstrip('/')
+        label = f'[{label}]({server}/{repo}/actions/runs/{run_id})'
+    return LAST_CHANGE_PREFIX + label
+
+def render_report(report, diffs=(), previous_status=''):
     labels = {'updated': '🆕 Обновлён', 'source_updated': '✅ Проверен — изменений нет', 'unchanged': '✅ Проверен — изменений нет'}
     lines = ['# GeoCat — статус обновлений', '',
              f'Последняя успешная проверка: **{report["checked_at_moscow"]}**.', '',
@@ -127,6 +152,9 @@ def render_report(report, diffs=()):
              '|---|---|']
     for r in report['files']:
         lines.append(f'| {r["file"]} | {labels[r["state"]]} |')
+    last_change = last_change_line(previous_status, diffs, report['checked_at_moscow'])
+    if last_change:
+        lines.extend(['', last_change])
     lines.extend(render_diffs(diffs))
     return '\n'.join(lines) + '\n'
 
@@ -134,6 +162,8 @@ def render_report(report, diffs=()):
 def run(outdir, force=False, config_dir=None, changes=None):
     config_dir = Path(config_dir) if config_dir is not None else ROOT / 'config'
     selected = selections(config_dir, changes)
+    status_path = outdir / 'STATUS.md'
+    previous_status = status_path.read_text(encoding='utf-8') if status_path.exists() else ''
     readme_path = outdir / 'README.md'
     readme = render_catalog(readme_path.read_text(encoding='utf-8'), selected) if readme_path.exists() else None
     started = time.monotonic()
@@ -175,7 +205,7 @@ def run(outdir, force=False, config_dir=None, changes=None):
                   release=release['tag_name'], seconds=round(time.monotonic()-started, 3),
                   files=[r[2] for r in results])
     atomic_write(outdir / 'metadata' / 'status.json', encoded(report))
-    atomic_write(outdir / 'STATUS.md', render_report(report, diffs).encode())
+    atomic_write(status_path, render_report(report, diffs, previous_status).encode())
     print(f'Both databases verified successfully in {report["seconds"]}s. Publication is the next workflow step.', flush=True)
     return report
 

@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
@@ -162,6 +163,25 @@ class DiffInspectorTests(unittest.TestCase):
         expected=('# GeoCat — статус обновлений\n\nПоследняя успешная проверка: **06.11.2026 06:23:00 МСК**.\n\n'
                   '| Файл | Статус |\n|---|---|\n| geosite.dat | 🆕 Обновлён |\n| geoip.dat | ✅ Проверен — изменений нет |\n')
         self.assertEqual(build_all.render_report(report),expected)
+
+    def test_last_change_link_survives_later_checks(self):
+        report = {'checked_at_moscow': '06.11.2026 17:40:12 МСК', 'files': []}
+        diffs = [
+            {'file': 'geosite.dat', 'state': 'changed', 'added': 20, 'removed': 0, 'categories': []},
+            {'file': 'geoip.dat', 'state': 'changed', 'added': 1, 'removed': 2, 'categories': []},
+        ]
+        previous = '**Последнее изменение правил:** [предыдущий отчёт](https://example.org/old)'
+        env = {'GITHUB_SERVER_URL': 'https://github.com', 'GITHUB_REPOSITORY': 'owner/repo', 'GITHUB_RUN_ID': '42'}
+        with patch.dict(os.environ, env):
+            status = build_all.render_report(report, diffs, previous)
+        expected = ('**Последнее изменение правил:** [06.11.2026 17:40:12 МСК · '
+                    'GeoSite +20 · GeoIP +1 / −2](https://github.com/owner/repo/actions/runs/42)')
+        self.assertIn(expected, status.splitlines())
+        self.assertNotIn(previous, status)
+        report['checked_at_moscow'] = '07.11.2026 08:10:00 МСК'
+        for state in ('unchanged', 'same_rules', 'unavailable', 'no_baseline'):
+            status = build_all.render_report(report, [{'file': 'geosite.dat', 'state': state}], status)
+            self.assertEqual(status.splitlines().count(expected), 1)
 
     def test_diff_failure_does_not_block_publication(self):
         with tempfile.TemporaryDirectory() as temp:
