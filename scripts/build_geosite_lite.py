@@ -7,55 +7,115 @@ Source: pinned latest RunetFreedom release and SHA-256 digest from GitHub API.
 from __future__ import annotations
 
 import hashlib
+from email.utils import parsedate_to_datetime
+import math
 import os
 from pathlib import Path
 import tempfile
 import urllib.request
 import urllib.error
+import urllib.parse
 import http.client
 import socket
 import time
 
 RELEASE_API = "https://api.github.com/repos/runetfreedom/russia-v2ray-rules-dat/releases/latest"
 MAX_SOURCE_BYTES = 160_000_000
+SOCKET_TIMEOUT = 60
+MAX_ATTEMPTS = 3
+RETRY_DELAYS = (10, 30)
+METADATA_BUDGET = 120
+DATABASE_BUDGET = 240
 
 
+def retry_delay(error: Exception, attempt: int) -> int | None:
+    """Respect server rate-limit delays; never retry ordinary permission errors."""
+    delay = RETRY_DELAYS[min(attempt - 1, len(RETRY_DELAYS) - 1)]
+    if not isinstance(error, urllib.error.HTTPError):
+        return delay
+    headers = error.headers or {}
+    retry_after = headers.get("Retry-After", "")
+    exhausted = headers.get("X-RateLimit-Remaining") == "0"
+    limited = error.code == 429 or (error.code == 403 and
+        (exhausted or bool(retry_after) or "rate limit" in str(error.reason).lower()))
+    if error.code == 403 and not limited:
+        # Secondary limits can be reported only in the JSON body, with HTTP Forbidden.
+        try:
+            limited = "rate limit" in (error.read(4096) or b"").decode("utf-8", errors="replace").lower()
+        except OSError:
+            pass
+    if not limited and error.code not in (408, 500, 502, 503, 504):
+        return None
+    waits = []
+    if retry_after:
+        try:
+            waits.append(int(retry_after) if retry_after.isdigit() else
+                         math.ceil(parsedate_to_datetime(retry_after).timestamp() - time.time()))
+        except (ValueError, TypeError, OverflowError):
+            pass
+    if exhausted:
+        reset = headers.get("X-RateLimit-Reset", "")
+        if reset.isdigit():
+            waits.append(math.ceil(int(reset) - time.time()) + 1)
+    if limited and not waits:
+        waits.append(60)
+    return max(delay, *waits) if waits else delay
 
 
 def download(url: str, max_bytes: int) -> bytes:
-    """Bounded downloads with progress and retries for transient transport errors."""
-    for attempt in range(1, 4):
+    """Download with scoped API auth, bounded retries and per-file diagnostics."""
+    target = urllib.parse.urlsplit(url)
+    github_api = target.scheme == "https" and target.netloc.lower() == "api.github.com"
+    label = "GitHub API" if github_api else (target.path.rsplit("/", 1)[-1] or "download")
+    token = os.environ.get("GITHUB_TOKEN", "").strip() if github_api else ""
+    if github_api:
+        print(f"GitHub API authentication: {'GITHUB_TOKEN' if token else 'anonymous'}", flush=True)
+    budget = METADATA_BUDGET if max_bytes <= 1_000_000 else DATABASE_BUDGET
+    deadline = time.monotonic() + budget
+    for attempt in range(1, MAX_ATTEMPTS + 1):
         started = time.monotonic()
         try:
+            remaining = deadline - started
+            if remaining <= 0:
+                raise TimeoutError(f"Download exceeded {budget}s retry budget")
             req = urllib.request.Request(url, headers={"User-Agent": "GeoCat-Builder/2.0"})
-            with urllib.request.urlopen(req, timeout=30) as resp:
+            if github_api:
+                req.add_header("Accept", "application/vnd.github+json")
+                if token:
+                    # urllib must not copy credentials to redirects or release/CDN hosts.
+                    req.add_unredirected_header("Authorization", f"Bearer {token}")
+            with urllib.request.urlopen(req, timeout=min(SOCKET_TIMEOUT, remaining)) as resp:
                 chunks, total, next_log = [], 0, 16_000_000
                 while True:
-                    if time.monotonic() - started > 180:
-                        raise TimeoutError("Download attempt exceeded 180 seconds")
+                    if time.monotonic() >= deadline:
+                        raise TimeoutError(f"Download exceeded {budget}s retry budget")
                     chunk = resp.read(min(1_048_576, max_bytes + 1 - total))
+                    if time.monotonic() >= deadline:
+                        raise TimeoutError(f"Download exceeded {budget}s retry budget")
                     if not chunk:
                         break
                     chunks.append(chunk)
                     total += len(chunk)
                     if total > max_bytes:
-                        raise ValueError(f"Remote file exceeds {max_bytes} bytes")
+                        raise ValueError(f"{label}: remote file exceeds {max_bytes} bytes")
                     if total >= next_log:
-                        print(f"Downloaded {total:,} bytes ({time.monotonic()-started:.1f}s)", flush=True)
+                        print(f"{label}: downloaded {total:,} bytes ({time.monotonic()-started:.1f}s)", flush=True)
                         next_log += 16_000_000
                 return b"".join(chunks)
         except (urllib.error.URLError, TimeoutError, socket.timeout,
                 http.client.IncompleteRead, ConnectionError) as exc:
-            if isinstance(exc, urllib.error.HTTPError) and exc.code not in (408, 429, 500, 502, 503, 504):
-                raise
-            if attempt == 3:
-                raise
-            delay = 2 ** attempt
+            detail = f"HTTP {exc.code}" if isinstance(exc, urllib.error.HTTPError) else type(exc).__name__
+            delay = retry_delay(exc, attempt)
             if isinstance(exc, urllib.error.HTTPError):
-                retry_after = exc.headers.get("Retry-After", "")
-                if retry_after.isdigit():
-                    delay = min(30, max(delay, int(retry_after)))
-            print(f"Temporary download error ({type(exc).__name__}); retry {attempt+1}/3 in {delay}s", flush=True)
+                exc.close()
+            if delay is None:
+                print(f"{label}: {detail}; permanent error, not retried", flush=True)
+                raise
+            if attempt == MAX_ATTEMPTS:
+                raise OSError(f"{label}: download failed after {attempt} attempts ({detail})") from exc
+            if time.monotonic() + delay >= deadline:
+                raise OSError(f"{label}: {detail}; retry needs {delay}s, beyond remaining download budget") from exc
+            print(f"{label}: temporary download error ({detail}); retry {attempt+1}/{MAX_ATTEMPTS} in {delay}s", flush=True)
             time.sleep(delay)
     raise AssertionError("Unreachable")
 

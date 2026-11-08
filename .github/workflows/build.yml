@@ -57,8 +57,9 @@ jobs:
         run: python3 -m unittest discover -s tests -v -b
       - name: Проверить релиз и собрать обе базы
         id: databases
-        timeout-minutes: 10
+        timeout-minutes: 12
         env:
+          GITHUB_TOKEN: ${{ github.token }}
           FORCE: ${{ inputs.force }}
           GEOSITE_ADD: ${{ inputs.geosite_add }}
           GEOSITE_REMOVE: ${{ inputs.geosite_remove }}

@@ -174,6 +174,12 @@ def run(outdir, force=False, config_dir=None, changes=None):
     assets = {a['name']: a for a in release['assets']}
     if len(assets) != len(release['assets']):
         raise ValueError('Duplicate release asset names')
+    missing = [name for name in NAMES if name not in assets]
+    if missing:
+        raise ValueError(f'Upstream release {release["tag_name"]} is incomplete: missing {", ".join(missing)}')
+    for name in NAMES:
+        if assets[name].get('state', 'uploaded') != 'uploaded':
+            raise ValueError(f'Upstream release {release["tag_name"]}: {name} is not fully uploaded')
     build_hash = fingerprint()
     print(f'Pinned upstream release: {release["tag_name"]}', flush=True)
     with ThreadPoolExecutor(max_workers=2) as pool:
