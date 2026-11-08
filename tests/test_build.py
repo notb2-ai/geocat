@@ -66,6 +66,31 @@ class Builds(unittest.TestCase):
         self.source['geoip.dat']=b'broken'
         with self.assertRaises(ValueError):self.run_build(True)
         self.assertEqual(before,{str(p.relative_to(self.out)):p.read_bytes() for p in self.out.rglob('*') if p.is_file()})
+    def test_download_failure_preserves_both_published_files(self):
+        self.run_build()
+        before={str(p.relative_to(self.out)):p.read_bytes() for p in self.out.rglob('*') if p.is_file()}
+        def failing(url, limit):
+            if url.endswith('/geoip.dat'):
+                raise OSError('geoip.dat: download failed after 3 attempts (TimeoutError)')
+            return self.download(url, limit)
+        with patch.object(b, 'download', side_effect=failing):
+            with self.assertRaisesRegex(OSError, 'geoip.dat'):
+                b.run(self.out, True, config_dir=self.out)
+        self.assertEqual(before,{str(p.relative_to(self.out)):p.read_bytes() for p in self.out.rglob('*') if p.is_file()})
+    def test_incomplete_upstream_release_fails_before_download_or_write(self):
+        self.run_build()
+        before={str(p.relative_to(self.out)):p.read_bytes() for p in self.out.rglob('*') if p.is_file()}
+        self.release['assets'].pop()
+        self.downloads=[]
+        with self.assertRaisesRegex(ValueError, 'incomplete: missing geoip.dat'):
+            self.run_build()
+        self.assertEqual(self.downloads, [b.RELEASE_API])
+        self.assertEqual(before,{str(p.relative_to(self.out)):p.read_bytes() for p in self.out.rglob('*') if p.is_file()})
+    def test_upload_in_progress_is_not_used(self):
+        self.release['assets'][1]['state']='new'
+        with self.assertRaisesRegex(ValueError, 'geoip.dat is not fully uploaded'):
+            self.run_build()
+        self.assertEqual(self.downloads, [b.RELEASE_API])
     def test_changed_source_same_tag_is_rebuilt(self):
         self.run_build();self.source['geosite.dat']+=site('extra')
         a=self.release['assets'][0];a['size']=len(self.source['geosite.dat']);a['digest']='sha256:'+b.sha(self.source['geosite.dat'])
