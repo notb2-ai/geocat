@@ -3,14 +3,14 @@
   "selected_categories": [
     "private"
   ],
-  "source_bytes": 17927471,
+  "source_bytes": 17927421,
   "output_bytes": 436,
   "output_sha256": "4acc277c0425871bf1171a06302a60fec1d7ced5db204bb5b4090a5b6e0efe99",
   "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
-  "release_tag": "202611090107",
-  "published_at": "2026-11-09T01:08:37Z",
-  "source_sha256": "9a043864421b8f15dac11e14538bd3ab79dc76006338c1885789aa2c7632adf3",
-  "source_asset_id": 725762392,
+  "release_tag": "202611091158",
+  "published_at": "2026-11-09T11:59:19Z",
+  "source_sha256": "a46f0357c0067b51bec885dabdaf6b82901076e5174ff215ad0db26b608f9ff4",
+  "source_asset_id": 727324665,
   "builder_sha256": "acaefcd55070660cff2b806457eaf8ee7d1496be64eec282ae8d04598e6c275b",
   "category_counts": {
     "private": 28
