@@ -1,5 +1,5 @@
 {
-  "source_categories": 1565,
+  "source_categories": 1566,
   "selected_categories": [
     "ru-available-only-inside",
     "category-bank-ru",
@@ -19,14 +19,14 @@
     "category-forums-ru",
     "private"
   ],
-  "source_bytes": 86519937,
+  "source_bytes": 86525302,
   "output_bytes": 41367,
-  "output_sha256": "28b2141be4699583a3e16ecbc906f2793f6f425cdf9290d95d5eb74ccb811532",
+  "output_sha256": "926ddceaa7799dbd6a4f8b48a46c4dd11347c1e8cfcb10dbcef5a9b8f3137b15",
   "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
-  "release_tag": "202611092349",
-  "published_at": "2026-11-09T23:50:37Z",
-  "source_sha256": "3d20fb0087308351686a4a8efba9f6029b17eac1dbf70e70a22b766c84289b58",
-  "source_asset_id": 729426611,
+  "release_tag": "202611101135",
+  "published_at": "2026-11-10T11:36:46Z",
+  "source_sha256": "1256c12c420a674d6f5cf3055c652286e683f3667cc11139a1363100c63848f2",
+  "source_asset_id": 731216809,
   "builder_sha256": "acaefcd55070660cff2b806457eaf8ee7d1496be64eec282ae8d04598e6c275b",
   "category_counts": {
     "ru-available-only-inside": 170,
