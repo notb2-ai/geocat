@@ -7,10 +7,10 @@
   "output_bytes": 436,
   "output_sha256": "4acc277c0425871bf1171a06302a60fec1d7ced5db204bb5b4090a5b6e0efe99",
   "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
-  "release_tag": "202611121141",
-  "published_at": "2026-11-12T11:42:49Z",
+  "release_tag": "202611122153",
+  "published_at": "2026-11-12T21:54:05Z",
   "source_sha256": "cfa763010944c5d698c8cc4e48a9a156117f939f74b77cec040641946956cc0f",
-  "source_asset_id": 739267630,
+  "source_asset_id": 741230459,
   "builder_sha256": "acaefcd55070660cff2b806457eaf8ee7d1496be64eec282ae8d04598e6c275b",
   "category_counts": {
     "private": 28
