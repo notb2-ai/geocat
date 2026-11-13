@@ -15,3 +15,6 @@ t2-ru
 category-public-tracker
 category-forums-ru
 private
+category-tech-media-ru
+category-education-ru
+category-media-ru

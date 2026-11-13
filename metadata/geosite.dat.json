@@ -17,11 +17,14 @@
     "t2-ru",
     "category-public-tracker",
     "category-forums-ru",
-    "private"
+    "private",
+    "category-tech-media-ru",
+    "category-education-ru",
+    "category-media-ru"
   ],
   "source_bytes": 87447305,
-  "output_bytes": 41367,
-  "output_sha256": "926ddceaa7799dbd6a4f8b48a46c4dd11347c1e8cfcb10dbcef5a9b8f3137b15",
+  "output_bytes": 45129,
+  "output_sha256": "27ccb45b2b2d3e6b13a16c3ae99415471a7e48665418c2f665c76f6aa9179175",
   "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
   "release_tag": "202611122153",
   "published_at": "2026-11-12T21:54:05Z",
@@ -45,7 +48,10 @@
     "t2-ru": 3,
     "category-public-tracker": 437,
     "category-forums-ru": 11,
-    "private": 133
+    "private": 133,
+    "category-tech-media-ru": 34,
+    "category-education-ru": 20,
+    "category-media-ru": 148
   },
-  "rule_count": 1999
+  "rule_count": 2201
 }

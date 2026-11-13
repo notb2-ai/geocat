@@ -55,7 +55,7 @@ https://raw.githubusercontent.com/notb2-ai/geocat/main/geoip.dat
 
 <!-- categories:start -->
 <details>
-<summary>GeoSite — категорий: 17 — показать список</summary>
+<summary>GeoSite — категорий: 20 — показать список</summary>
 
 ```text
 ru-available-only-inside
@@ -75,6 +75,9 @@ t2-ru
 category-public-tracker
 category-forums-ru
 private
+category-tech-media-ru
+category-education-ru
+category-media-ru
 ```
 
 </details>
