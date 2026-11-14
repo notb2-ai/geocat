@@ -102,7 +102,6 @@ private
 
 ```text
 geosite:geocat-ru
-geosite:ru-available-only-inside
 ```
 
 `geocat-ru` объединяет все выбранные категории GeoSite и дополнительные доменные правила. Каждая исходная категория доступна отдельно.
