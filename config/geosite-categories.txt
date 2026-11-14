@@ -19,3 +19,4 @@ category-tech-media-ru
 category-education-ru
 category-media-ru
 regru
+nic-ru

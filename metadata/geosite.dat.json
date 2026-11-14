@@ -21,11 +21,12 @@
     "category-tech-media-ru",
     "category-education-ru",
     "category-media-ru",
-    "regru"
+    "regru",
+    "nic-ru"
   ],
   "source_bytes": 87715604,
-  "output_bytes": 45178,
-  "output_sha256": "8de0861b759c94c96646684baec6062798631047e335571138d98cf2802910de",
+  "output_bytes": 45241,
+  "output_sha256": "fe01a93b7c16e8dc1bcb4d335069ada01405ce7e1aa3d434c59e0d4ea67949c7",
   "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
   "release_tag": "202611141047",
   "published_at": "2026-11-14T10:48:57Z",
@@ -53,7 +54,8 @@
     "category-tech-media-ru": 34,
     "category-education-ru": 20,
     "category-media-ru": 148,
-    "regru": 3
+    "regru": 3,
+    "nic-ru": 4
   },
-  "rule_count": 2204
+  "rule_count": 2208
 }
