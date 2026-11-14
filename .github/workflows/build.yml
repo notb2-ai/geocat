@@ -25,6 +25,16 @@ on:
         type: string
         required: false
         default: ""
+      geocat_domains_add:
+        description: "Добавить домены в geocat-ru через пробел или запятую"
+        type: string
+        required: false
+        default: ""
+      geocat_domains_remove:
+        description: "Удалить ручные домены из geocat-ru через пробел или запятую"
+        type: string
+        required: false
+        default: ""
       force:
         description: "Принудительно скачать и пересобрать обе базы"
         type: boolean
@@ -65,6 +75,8 @@ jobs:
           GEOSITE_REMOVE: ${{ inputs.geosite_remove }}
           GEOIP_ADD: ${{ inputs.geoip_add }}
           GEOIP_REMOVE: ${{ inputs.geoip_remove }}
+          GEOCAT_DOMAINS_ADD: ${{ inputs.geocat_domains_add }}
+          GEOCAT_DOMAINS_REMOVE: ${{ inputs.geocat_domains_remove }}
           PYTHONUNBUFFERED: "1"
         run: |
           if [ "$FORCE" = "true" ]; then
@@ -77,7 +89,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f geosite.dat geoip.dat STATUS.md README.md metadata/geosite.dat.json metadata/geoip.dat.json metadata/status.json config/geosite-categories.txt config/geoip-categories.txt
+          git add -f geosite.dat geoip.dat STATUS.md README.md metadata/geosite.dat.json metadata/geoip.dat.json metadata/status.json config/geosite-categories.txt config/geoip-categories.txt config/geocat-ru-domains.txt
           if git diff --cached --quiet; then
             echo "Результат уже опубликован."
             exit 0

@@ -26,6 +26,7 @@ MAX_ATTEMPTS = 3
 RETRY_DELAYS = (10, 30)
 METADATA_BUDGET = 120
 DATABASE_BUDGET = 240
+AGGREGATE_CODE = "geocat-ru"
 
 
 def retry_delay(error: Exception, attempt: int) -> int | None:
@@ -219,6 +220,29 @@ def trim(data: bytes, wanted: tuple[str, ...]) -> tuple[bytes, dict]:
     return final, {"source_categories": len(entries), "selected_categories": list(wanted),
                    "source_bytes": len(data), "output_bytes": len(final),
                    "output_sha256": hashlib.sha256(final).hexdigest()}
+
+
+def length_delimited(number: int, value: bytes) -> bytes:
+    return varint_write(number * 8 + 2) + varint_write(len(value)) + value
+
+
+def append_aggregate(data: bytes, domains: tuple[str, ...]) -> bytes:
+    entries = parse_geosites(data)
+    if AGGREGATE_CODE in entries:
+        raise ValueError(f"GeoSite category {AGGREGATE_CODE} is reserved")
+
+    rules = {}
+    for entry in entries.values():
+        for number, wire, start, end, _, _ in protobuf_fields(entry):
+            if number == 2 and wire == 2:
+                rules[entry[start:end]] = None
+    for domain in domains:
+        # Domain.Type RootDomain (2) matches the domain and its subdomains.
+        rule = b"\x08\x02" + length_delimited(2, domain.encode("ascii"))
+        rules[rule] = None
+    payload = length_delimited(1, AGGREGATE_CODE.upper().encode("ascii"))
+    payload += b"".join(length_delimited(2, rule) for rule in rules)
+    return data + length_delimited(1, payload)
 
 
 def atomic_write(path: Path, data: bytes) -> None:

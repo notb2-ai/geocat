@@ -49,10 +49,41 @@ class CategoryEdits(unittest.TestCase):
         with self.assertRaises(ValueError): self.run_build(changes)
         self.assertEqual(self.snapshot(), before)
 
-    def test_migration_same_bytes_as_existing_build(self):
+    def test_aggregate_preserves_original_category_bytes(self):
         self.run_build()
-        self.assertEqual((self.out/'geosite.dat').read_bytes(), s.trim(self.sources['geosite.dat'], BASE_SITES)[0])
+        original, _ = s.trim(self.sources['geosite.dat'], BASE_SITES)
+        self.assertTrue((self.out/'geosite.dat').read_bytes().startswith(original))
         self.assertEqual((self.out/'geoip.dat').read_bytes(), private())
+
+    def test_manual_domains_persist_and_only_affect_the_aggregate(self):
+        self.run_build()
+        path = self.out / 'geosite.dat'
+        original = path.read_bytes()
+        expected = s.parse_geosites(original)
+        aggregate = expected.pop(s.AGGREGATE_CODE)
+        self.assertEqual(aggregate, field(1, b'GEOCAT-RU') +
+                         field(2, b'\x08\x02' + field(2, b'example.org')))
+        with patch.object(b, 'download', side_effect=self.download):
+            b.run(self.out, config_dir=self.root,
+                  domains_add='domain:Example.NET., example.net пример.рф')
+            actual = s.parse_geosites(path.read_bytes())
+            updated = actual.pop(s.AGGREGATE_CODE)
+            self.assertEqual(actual, expected)
+            self.assertEqual(updated, aggregate + b''.join(
+                field(2, b'\x08\x02' + field(2, name))
+                for name in (b'example.net', b'xn--e1afmkfd.xn--p1ai')))
+            self.downloads.clear()
+            b.run(self.out, config_dir=self.root)
+            self.assertEqual(self.downloads, [b.RELEASE_API])
+            self.assertEqual(s.parse_geosites(path.read_bytes())[s.AGGREGATE_CODE], updated)
+            b.run(self.out, config_dir=self.root, domains_remove='example.net пример.рф')
+            self.assertEqual(path.read_bytes(), original)
+            before = self.snapshot()
+            self.downloads.clear()
+            with self.assertRaisesRegex(ValueError, 'Invalid domain'):
+                b.run(self.out, config_dir=self.root, domains_add='https://example.net/path')
+            self.assertEqual(self.downloads, [])
+            self.assertEqual(self.snapshot(), before)
 
     def test_add_both_then_scheduled_check_preserves_selection_and_skips(self):
         self.run_build()
@@ -60,7 +91,8 @@ class CategoryEdits(unittest.TestCase):
                             'geoip.dat': ('geoip:RU cn', '')})
         self.assertTrue(all(x['state'] == 'updated' for x in r['files']))
         self.assertEqual(set(s.parse_geosites((self.out/'geoip.dat').read_bytes())), {'private','ru','cn'})
-        self.assertEqual(set(s.parse_geosites((self.out/'geosite.dat').read_bytes())), set(BASE_SITES)|{'google','telegram'})
+        self.assertEqual(set(s.parse_geosites((self.out/'geosite.dat').read_bytes())),
+                         set(BASE_SITES) | {'google', 'telegram', s.AGGREGATE_CODE})
         before = {n: (self.out/n).read_bytes() for n in b.NAMES}
         self.downloads.clear(); r = self.run_build()
         self.assertEqual(self.downloads, [b.RELEASE_API])
@@ -90,6 +122,8 @@ class CategoryEdits(unittest.TestCase):
         for name in b.NAMES:
             source = s.parse_geosites(self.sources[name])
             actual = s.parse_geosites((self.out/name).read_bytes())
+            if name == 'geosite.dat':
+                actual.pop(s.AGGREGATE_CODE)
             self.assertEqual(actual, {k: source[k] for k in c.selections(self.root)[name]})
 
     def test_unknown_site_leaves_all_files_unchanged(self):
@@ -147,7 +181,7 @@ class CategoryEdits(unittest.TestCase):
         readme.write_text('Intro\n<!-- categories:start -->\n<!-- categories:end -->\nFooter\n')
         self.run_build({'geosite.dat': ('google',''), 'geoip.dat': ('ru cn','')})
         text = readme.read_text()
-        self.assertIn('GeoSite — категорий: 4', text)
+        self.assertIn('GeoSite — категорий: 5', text)
         self.assertIn('GeoIP — категорий: 3', text)
         self.assertTrue(text.startswith('Intro\n') and text.endswith('\nFooter\n'))
         self.assert_no_write_on_error({'geoip.dat': ('unknown','')})
@@ -162,11 +196,13 @@ class CategoryEdits(unittest.TestCase):
     def test_cli_environment_then_schedule_without_inputs(self):
         argv = ['build_all.py', '--config-dir', str(self.root), '--output-dir', str(self.out)]
         env = {'GEOSITE_ADD':'geosite:google, telegram', 'GEOSITE_REMOVE':'',
-               'GEOIP_ADD':'geoip:ru', 'GEOIP_REMOVE':''}
+               'GEOIP_ADD':'geoip:ru', 'GEOIP_REMOVE':'',
+               'GEOCAT_DOMAINS_ADD':'domain:example.net', 'GEOCAT_DOMAINS_REMOVE':''}
         with patch.object(sys,'argv',argv), patch.dict(os.environ,env), patch.object(b,'download',side_effect=self.download):
             b.main()
         self.assertIn('google', c.selections(self.root)['geosite.dat'])
         self.assertEqual(c.selections(self.root)['geoip.dat'], ('private','ru'))
+        self.assertEqual((self.root / c.MANUAL_DOMAINS_FILE).read_text(), 'example.net\n')
         self.downloads.clear()
         with patch.object(sys,'argv',argv), patch.dict(os.environ,{k:'' for k in env}), patch.object(b,'download',side_effect=self.download):
             b.main()

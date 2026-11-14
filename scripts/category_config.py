@@ -2,7 +2,10 @@
 from pathlib import Path
 import re
 
+from scripts.build_geosite_lite import AGGREGATE_CODE
+
 FILES = {'geosite.dat': 'geosite-categories.txt', 'geoip.dat': 'geoip-categories.txt'}
+MANUAL_DOMAINS_FILE = 'geocat-ru-domains.txt'
 
 def read_categories(path, kind):
     result = parse(Path(path).read_text(encoding='utf-8'), kind)
@@ -18,6 +21,8 @@ def parse(text, kind):
         token = token.removeprefix(kind + ':')
         if not re.fullmatch(r'[a-z0-9][a-z0-9_.-]*', token):
             raise ValueError(f'{kind}: invalid category {token!r}')
+        if kind == 'geosite' and token == AGGREGATE_CODE:
+            raise ValueError(f'{kind}: {token} is generated automatically')
         if token not in values:
             values.append(token)
     return tuple(values)
@@ -42,6 +47,38 @@ def selections(root, changes=None):
         add, remove = changes.get(name, ('', ''))
         result[name] = edit(current, add, remove, kind)
     return result
+
+
+def parse_domains(text):
+    domains = []
+    for token in re.split(r'[\s,]+', text.strip().lower()):
+        if not token:
+            continue
+        domain = token.removeprefix('domain:')
+        try:
+            domain = domain.encode('idna').decode('ascii').removesuffix('.')
+        except UnicodeError as exc:
+            raise ValueError(f'Invalid domain: {token!r}') from exc
+        labels = domain.split('.')
+        if (len(domain) > 253 or len(labels) < 2 or labels[-1].isdigit()
+                or any(not re.fullmatch(r'[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?', label)
+                       for label in labels)):
+            raise ValueError(f'Invalid domain: {token!r}')
+        domains.append(domain)
+    return tuple(dict.fromkeys(domains))
+
+
+def manual_domains(path, add, remove):
+    try:
+        current = parse_domains(path.read_text(encoding='utf-8'))
+    except FileNotFoundError:
+        current = ()
+    additions, removals = parse_domains(add), set(parse_domains(remove))
+    overlap = removals.intersection(additions)
+    if overlap:
+        raise ValueError(f'Domains both added and removed: {sorted(overlap)}')
+    return tuple(dict.fromkeys(domain for domain in (*current, *additions) if domain not in removals))
+
 
 def render_catalog(readme, selected):
     start, end = '<!-- categories:start -->', '<!-- categories:end -->'

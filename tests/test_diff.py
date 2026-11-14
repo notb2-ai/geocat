@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from scripts.build_geosite_lite import varint_write
+from scripts.build_geosite_lite import append_aggregate, varint_write
 from scripts.diff_inspector import diff_file, render_diffs
 from scripts import build_all
 
@@ -200,7 +200,7 @@ class DiffInspectorTests(unittest.TestCase):
                 with patch.object(build_all,'diff_file',side_effect=RuntimeError('fake')):
                     result=build_all.run(root,config_dir=root/'config')
             self.assertEqual(result['files'][0]['state'],'updated')
-            self.assertEqual((root/'geosite.dat').read_bytes(),site)
+            self.assertEqual((root/'geosite.dat').read_bytes(), append_aggregate(site, ()))
             self.assertIn('подробное сравнение недоступно',(root/'STATUS.md').read_text())
 
     def test_integration_existing_count_same_new_name(self):
@@ -212,7 +212,7 @@ class DiffInspectorTests(unittest.TestCase):
             old=geosite({'yandex':[domain('old')], 'category-bank-ru':[domain('b')]})
             new=geosite({'yandex':[domain('new')], 'category-bank-ru':[domain('b')]})
             gip=geoip({'private':([cidr('10.0.0.0',8)],False)})
-            (root/'geosite.dat').write_bytes(old)
+            (root/'geosite.dat').write_bytes(append_aggregate(old, ()))
             (root/'geoip.dat').write_bytes(gip)
             src={'geosite.dat':new,'geoip.dat':gip}
             from scripts.build_all import sha
@@ -222,7 +222,7 @@ class DiffInspectorTests(unittest.TestCase):
             with patch.object(build_all,'download',side_effect=fake_download):
                 result=build_all.run(root,config_dir=root/'config')
             self.assertEqual(result['files'][0]['state'],'updated')
-            self.assertEqual((root/'geosite.dat').read_bytes(),new)
+            self.assertEqual((root/'geosite.dat').read_bytes(), append_aggregate(new, ()))
             md=(root/'STATUS.md').read_text()
             self.assertIn('domain:old',md)
             self.assertIn('domain:new',md)

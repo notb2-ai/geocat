@@ -10,10 +10,10 @@ from pathlib import Path
 import re
 import time
 
-from scripts.build_geosite_lite import (RELEASE_API, MAX_SOURCE_BYTES,
-    atomic_write, download, parse_geosites, protobuf_fields, trim)
+from scripts.build_geosite_lite import (AGGREGATE_CODE, RELEASE_API, MAX_SOURCE_BYTES,
+    append_aggregate, atomic_write, download, parse_geosites, protobuf_fields, trim)
 from scripts.build_geoip_lite import verify_geoip
-from scripts.category_config import FILES, selections, render_catalog
+from scripts.category_config import FILES, MANUAL_DOMAINS_FILE, manual_domains, selections, render_catalog
 from scripts.diff_inspector import diff_file, render_diffs
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -69,7 +69,7 @@ def expected_hash(asset, assets, name):
         raise ValueError(f'{name}: invalid upstream SHA-256')
     return value
 
-def build_one(name, release, assets, outdir, build_hash, force=False, *, wanted):
+def build_one(name, release, assets, outdir, build_hash, force=False, *, wanted, domains=()):
     started = time.monotonic()
     asset = assets[name]
     expected = expected_hash(asset, assets, name)
@@ -79,16 +79,19 @@ def build_one(name, release, assets, outdir, build_hash, force=False, *, wanted)
     old_meta = read_json(outdir / 'metadata' / (name + '.json'))
     old = path.read_bytes() if path.exists() else b''
     old_hash = sha(old) if old else None
+    is_geosite = name == 'geosite.dat'
+    published_categories = (*wanted, AGGREGATE_CODE) if is_geosite else wanted
     reusable = (not force and old_meta.get('builder_sha256') == build_hash
                 and old_meta.get('source_sha256') == expected
                 and old_meta.get('source_bytes') == asset['size']
                 and old_meta.get('source_asset_id') == asset['id']
                 and old_meta.get('selected_categories') == list(wanted)
+                and (not is_geosite or old_meta.get('manual_domains') == list(domains))
                 and old_meta.get('output_sha256') == old_hash
                 and old_meta.get('output_bytes') == len(old) and bool(old))
     if reusable:
         try:
-            counts = validate(name, old, wanted)
+            counts = validate(name, old, published_categories)
         except (ValueError, IndexError, UnicodeError):
             reusable = False
     if reusable:
@@ -101,7 +104,11 @@ def build_one(name, release, assets, outdir, build_hash, force=False, *, wanted)
         if len(source) != asset['size'] or sha(source) != expected:
             raise ValueError(f'{name}: upstream size or SHA-256 mismatch; refusing publication')
         output, stats = trim(source, wanted)
-        counts = validate(name, output, wanted)
+        if is_geosite:
+            output = append_aggregate(output, domains)
+            stats.update(manual_domains=list(domains), output_bytes=len(output),
+                         output_sha256=sha(output))
+        counts = validate(name, output, published_categories)
         meta = dict(stats)
     meta.update(origin_repo=ORIGIN, release_tag=release['tag_name'],
                 published_at=release.get('published_at'), source_sha256=expected,
@@ -159,13 +166,16 @@ def render_report(report, diffs=(), previous_status=''):
     return '\n'.join(lines) + '\n'
 
 
-def run(outdir, force=False, config_dir=None, changes=None):
+def run(outdir, force=False, config_dir=None, changes=None, *, domains_add='', domains_remove=''):
     config_dir = Path(config_dir) if config_dir is not None else ROOT / 'config'
     selected = selections(config_dir, changes)
+    domains_path = config_dir / MANUAL_DOMAINS_FILE
+    domains = manual_domains(domains_path, domains_add, domains_remove)
     status_path = outdir / 'STATUS.md'
     previous_status = status_path.read_text(encoding='utf-8') if status_path.exists() else ''
     readme_path = outdir / 'README.md'
-    readme = render_catalog(readme_path.read_text(encoding='utf-8'), selected) if readme_path.exists() else None
+    catalog = {**selected, 'geosite.dat': (*selected['geosite.dat'], AGGREGATE_CODE)}
+    readme = render_catalog(readme_path.read_text(encoding='utf-8'), catalog) if readme_path.exists() else None
     started = time.monotonic()
     print('Checking latest RunetFreedom release once for both databases...', flush=True)
     release = json.loads(download(RELEASE_API, 1_000_000))
@@ -183,7 +193,11 @@ def run(outdir, force=False, config_dir=None, changes=None):
     build_hash = fingerprint()
     print(f'Pinned upstream release: {release["tag_name"]}', flush=True)
     with ThreadPoolExecutor(max_workers=2) as pool:
-        futures = [pool.submit(build_one, n, release, assets, outdir, build_hash, force, wanted=selected[n]) for n in NAMES]
+        futures = [
+            pool.submit(build_one, name, release, assets, outdir, build_hash, force,
+                        wanted=selected[name], domains=domains if name == 'geosite.dat' else ())
+            for name in NAMES
+        ]
         results = [f.result() for f in futures]
     # Observe-only: diff errors do not block verified database publication.
     # Run before writing outputs so existing files remain the baseline.
@@ -203,6 +217,7 @@ def run(outdir, force=False, config_dir=None, changes=None):
         atomic_write(outdir / 'metadata' / (name + '.json'), encoded(meta))
     for name, filename in FILES.items():
         atomic_write(config_dir / filename, ('\n'.join(selected[name]) + '\n').encode())
+    atomic_write(domains_path, ''.join(domain + '\n' for domain in domains).encode())
     if readme is not None:
         atomic_write(readme_path, readme.encode())
     now = datetime.now(timezone.utc)
@@ -223,11 +238,14 @@ def main():
     for kind in ('geosite', 'geoip'):
         for operation in ('add', 'remove'):
             parser.add_argument(f'--{kind}-{operation}', default=os.environ.get(f'{kind}_{operation}'.upper(), ''))
+    parser.add_argument('--domains-add', default=os.environ.get('GEOCAT_DOMAINS_ADD', ''))
+    parser.add_argument('--domains-remove', default=os.environ.get('GEOCAT_DOMAINS_REMOVE', ''))
     args = parser.parse_args()
     changes = {kind + '.dat': (getattr(args, kind + '_add'), getattr(args, kind + '_remove'))
                for kind in ('geosite', 'geoip')}
     try:
-        run(args.output_dir, args.force, args.config_dir, changes)
+        run(args.output_dir, args.force, args.config_dir, changes,
+            domains_add=args.domains_add, domains_remove=args.domains_remove)
     except (ValueError, OSError) as exc:
         parser.exit(1, f'Ошибка: {exc}\n')
 

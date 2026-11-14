@@ -55,7 +55,7 @@ https://raw.githubusercontent.com/notb2-ai/geocat/main/geoip.dat
 
 <!-- categories:start -->
 <details>
-<summary>GeoSite — категорий: 22 — показать список</summary>
+<summary>GeoSite — категорий: 23 — показать список</summary>
 
 ```text
 ru-available-only-inside
@@ -80,6 +80,7 @@ category-education-ru
 category-media-ru
 regru
 nic-ru
+geocat-ru
 ```
 
 </details>
@@ -95,6 +96,23 @@ private
 <!-- categories:end -->
 
 Состав хранится в [списке GeoSite](config/geosite-categories.txt) и [списке GeoIP](config/geoip-categories.txt). Категории сохраняются при обновлении.
+
+### Категории в маршрутах
+
+В поле Domain можно указать весь набор GeoCat одной строкой или выбрать отдельную категорию:
+
+```text
+geosite:geocat-ru
+geosite:ru-available-only-inside
+```
+
+`geocat-ru` автоматически объединяет все выбранные категории GeoSite и [ручные домены](config/geocat-ru-domains.txt). В **Actions → Build GeoCat databases → Run workflow** добавляй домены через `geocat_domains_add`, а удаляй их из ручного списка через `geocat_domains_remove`. Принимаются имена через пробел или запятую, с необязательным префиксом `domain:`:
+
+```text
+example.org, domain:example.net
+```
+
+Ручные правила охватывают домен и его поддомены, действуют только в `geocat-ru` и сохраняются между запусками. Если удалённый из ручного списка домен также есть в исходной категории, он продолжит попадать в `geocat-ru` из неё.
 
 Направления direct/proxy/block задаются в клиенте. Все категории, используемые его правилами, должны присутствовать в соответствующей базе.
 
