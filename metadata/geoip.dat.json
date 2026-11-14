@@ -1,11 +1,12 @@
 {
   "source_categories": 266,
   "selected_categories": [
-    "private"
+    "private",
+    "cloudflare"
   ],
   "source_bytes": 17919503,
-  "output_bytes": 436,
-  "output_sha256": "4acc277c0425871bf1171a06302a60fec1d7ced5db204bb5b4090a5b6e0efe99",
+  "output_bytes": 10509,
+  "output_sha256": "b186d76b767a9219fe9e6e2c73360d68437812e3d1aa8b8d7f41a2d459b90f61",
   "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
   "release_tag": "202611142000",
   "published_at": "2026-11-14T20:01:47Z",
@@ -13,8 +14,9 @@
   "source_asset_id": 748621678,
   "builder_sha256": "629f3250f382dbdc157d3ed68a9d555efae469c6aedde767a63b42ffc3180cea",
   "category_counts": {
-    "private": 28
+    "private": 28,
+    "cloudflare": 911
   },
-  "rule_count": 28,
+  "rule_count": 939,
   "geoip_private_cidr_count": 28
 }

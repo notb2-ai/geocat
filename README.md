@@ -85,10 +85,11 @@ geocat-ru
 </details>
 
 <details>
-<summary>GeoIP — категорий: 1 — показать список</summary>
+<summary>GeoIP — категорий: 2 — показать список</summary>
 
 ```text
 private
+cloudflare
 ```
 
 </details>
