@@ -175,7 +175,7 @@ def run(outdir, force=False, config_dir=None, changes=None, *, domains_add='', d
     previous_status = status_path.read_text(encoding='utf-8') if status_path.exists() else ''
     readme_path = outdir / 'README.md'
     catalog = {**selected, 'geosite.dat': (*selected['geosite.dat'], AGGREGATE_CODE)}
-    readme = render_catalog(readme_path.read_text(encoding='utf-8'), catalog) if readme_path.exists() else None
+    readme = render_catalog(readme_path.read_text(encoding='utf-8'), catalog, domains) if readme_path.exists() else None
     started = time.monotonic()
     print('Checking latest RunetFreedom release once for both databases...', flush=True)
     release = json.loads(download(RELEASE_API, 1_000_000))

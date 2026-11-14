@@ -92,6 +92,16 @@ private
 ```
 
 </details>
+
+<details>
+<summary>Ручные домены geocat-ru — 2</summary>
+
+```text
+dom.ru
+beeline.ru
+```
+
+</details>
 <!-- categories:end -->
 
 Состав хранится в [списке GeoSite](config/geosite-categories.txt) и [списке GeoIP](config/geoip-categories.txt). Категории сохраняются при обновлении.

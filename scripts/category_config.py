@@ -80,7 +80,7 @@ def manual_domains(path, add, remove):
     return tuple(dict.fromkeys(domain for domain in (*current, *additions) if domain not in removals))
 
 
-def render_catalog(readme, selected):
+def render_catalog(readme, selected, domains):
     start, end = '<!-- categories:start -->', '<!-- categories:end -->'
     if readme.count(start) != 1 or readme.count(end) != 1 or readme.index(start) >= readme.index(end):
         raise ValueError('README: missing or ambiguous category markers')
@@ -89,4 +89,7 @@ def render_catalog(readme, selected):
         names = selected[name]
         lines += ['<details>', f'<summary>{title} — категорий: {len(names)} — показать список</summary>',
                   '', '```text', *names, '```', '', '</details>', '']
+    domain_list = ['```text', *domains, '```'] if domains else ['Ручных доменов пока нет.']
+    lines += ['<details>', f'<summary>Ручные домены geocat-ru — {len(domains)}</summary>',
+              '', *domain_list, '', '</details>', '']
     return readme.split(start)[0] + start + '\n'.join(lines) + end + readme.split(end)[1]
