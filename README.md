@@ -89,7 +89,7 @@ geocat-ru
 
 ```text
 private
-cloudflare
+yandex
 ```
 
 </details>
