@@ -9,9 +9,7 @@
 
 
 
-[![Last Result](https://img.shields.io/github/actions/workflow/status/notb2-ai/geocat/build.yml?branch=main&label=Last%20Result)](https://github.com/notb2-ai/geocat/actions/workflows/build.yml)
 [![Last Update](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnotb2-ai%2Fgeocat%2Fmain%2Fmetadata%2Fstatus.json&query=%24.checked_at_moscow&label=Last%20Update&color=blue)](https://github.com/notb2-ai/geocat/blob/main/STATUS.md)
-[![Last Trigger](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.github.com%2Frepos%2Fnotb2-ai%2Fgeocat%2Factions%2Fworkflows%2Fbuild.yml%2Fruns%3Fper_page%3D1&query=%24.workflow_runs%5B0%5D.event&label=Last%20Trigger&color=blue)](https://github.com/notb2-ai/geocat/actions/workflows/build.yml)
 
 [![GeoSite](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnotb2-ai%2Fgeocat%2Fmain%2Fmetadata%2Fgeosite.dat.json&query=%24.rule_count&label=GeoSite&suffix=%20rules&color=blue)](https://github.com/notb2-ai/geocat/blob/main/metadata/geosite.dat.json)
 [![GeoIP](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnotb2-ai%2Fgeocat%2Fmain%2Fmetadata%2Fgeoip.dat.json&query=%24.rule_count&label=GeoIP&suffix=%20CIDR&color=blue)](https://github.com/notb2-ai/geocat/blob/main/metadata/geoip.dat.json)
@@ -106,13 +104,7 @@ geosite:geocat-ru
 geosite:ru-available-only-inside
 ```
 
-`geocat-ru` автоматически объединяет все выбранные категории GeoSite и [ручные домены](config/geocat-ru-domains.txt). В **Actions → Build GeoCat databases → Run workflow** добавляй домены через `geocat_domains_add`, а удаляй их из ручного списка через `geocat_domains_remove`. Принимаются имена через пробел или запятую, с необязательным префиксом `domain:`:
-
-```text
-example.org, domain:example.net
-```
-
-Ручные правила охватывают домен и его поддомены, действуют только в `geocat-ru` и сохраняются между запусками. Если удалённый из ручного списка домен также есть в исходной категории, он продолжит попадать в `geocat-ru` из неё.
+`geocat-ru` объединяет все выбранные категории GeoSite и дополнительные доменные правила. Каждая исходная категория доступна отдельно.
 
 Направления direct/proxy/block задаются в клиенте. Все категории, используемые его правилами, должны присутствовать в соответствующей базе.
 
