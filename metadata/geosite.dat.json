@@ -17,7 +17,6 @@
     "t2-ru",
     "category-public-tracker",
     "category-forums-ru",
-    "private",
     "category-tech-media-ru",
     "category-education-ru",
     "category-media-ru",
@@ -25,9 +24,12 @@
     "nic-ru"
   ],
   "source_bytes": 87715604,
-  "output_bytes": 89614,
-  "output_sha256": "6dbf3c028a8f621cd9035cd4f85b3383bc3fdf618f1a538b7e3ec9a0fc56f326",
-  "manual_domains": [],
+  "output_bytes": 83220,
+  "output_sha256": "1f298eecb1fdcdb44ca95b9eb6444738b2c710789e2d50ad07cf5feffb644b45",
+  "manual_domains": [
+    "dom.ru",
+    "beeline.ru"
+  ],
   "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
   "release_tag": "202611141047",
   "published_at": "2026-11-14T10:48:57Z",
@@ -51,13 +53,12 @@
     "t2-ru": 3,
     "category-public-tracker": 437,
     "category-forums-ru": 11,
-    "private": 133,
     "category-tech-media-ru": 34,
     "category-education-ru": 20,
     "category-media-ru": 148,
     "regru": 3,
     "nic-ru": 4,
-    "geocat-ru": 2184
+    "geocat-ru": 2053
   },
-  "rule_count": 4392
+  "rule_count": 4128
 }
