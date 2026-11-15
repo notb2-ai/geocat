@@ -23,18 +23,18 @@
     "regru",
     "nic-ru"
   ],
-  "source_bytes": 87824694,
+  "source_bytes": 87826880,
   "output_bytes": 83220,
-  "output_sha256": "b58070ac16c24fabf2621fe9cf09bc644ba87094899bc675704644eb047b7a12",
+  "output_sha256": "445fa6c50d396f0fc3172e9963e5416e32c67fd5fed59f35aa685cbc27c6e307",
   "manual_domains": [
     "dom.ru",
     "beeline.ru"
   ],
   "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
-  "release_tag": "202611142000",
-  "published_at": "2026-11-14T20:01:47Z",
-  "source_sha256": "b4581773038172242c27b5eb9a48c22c0a70eaa4b8ea0ab241ca2b6a41976ded",
-  "source_asset_id": 748621499,
+  "release_tag": "202611150112",
+  "published_at": "2026-11-15T01:13:17Z",
+  "source_sha256": "3472727d09b4541ee21c9d3ddf413fbeb91e80ce1d11775e880fd25a30ca32d6",
+  "source_asset_id": 749364940,
   "builder_sha256": "629f3250f382dbdc157d3ed68a9d555efae469c6aedde767a63b42ffc3180cea",
   "category_counts": {
     "ru-available-only-inside": 170,
