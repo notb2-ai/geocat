@@ -1,5 +1,5 @@
 {
-  "source_categories": 1566,
+  "source_categories": 1567,
   "selected_categories": [
     "ru-available-only-inside",
     "category-bank-ru",
@@ -23,18 +23,18 @@
     "regru",
     "nic-ru"
   ],
-  "source_bytes": 87838038,
+  "source_bytes": 87796485,
   "output_bytes": 83298,
-  "output_sha256": "9b2265f3b5a0d35ff7b9b2557f789224b97a9bd7565cb6b949f06e50206f96f6",
+  "output_sha256": "9e018e9cb3680f558c66e0c534999b373d5199b182dfbfba9a98baab4541f737",
   "manual_domains": [
     "dom.ru",
     "beeline.ru"
   ],
   "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
-  "release_tag": "202611160118",
-  "published_at": "2026-11-16T01:19:30Z",
-  "source_sha256": "bda07b002e77613964fb41939a6719b61ee6ba44e82a6e88b32d6cba9ce3889d",
-  "source_asset_id": 752974192,
+  "release_tag": "202611161155",
+  "published_at": "2026-11-16T11:55:55Z",
+  "source_sha256": "e4f9d347ab3f5f25de4c94870df31ba5d6c10eb69f2f3acde2b58ddb87438f9a",
+  "source_asset_id": 754676056,
   "builder_sha256": "629f3250f382dbdc157d3ed68a9d555efae469c6aedde767a63b42ffc3180cea",
   "category_counts": {
     "ru-available-only-inside": 170,
