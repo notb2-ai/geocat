@@ -55,7 +55,7 @@ https://raw.githubusercontent.com/notb2-ai/geocat/main/geoip.dat
 
 <!-- categories:start -->
 <details>
-<summary>GeoSite — категорий: 22 — показать список</summary>
+<summary>GeoSite — категорий: 24 — показать список</summary>
 
 ```text
 ru-available-only-inside
@@ -79,6 +79,8 @@ category-education-ru
 category-media-ru
 regru
 nic-ru
+2gis
+cdek
 geocat-ru
 ```
 

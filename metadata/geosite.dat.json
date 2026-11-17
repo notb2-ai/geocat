@@ -21,20 +21,22 @@
     "category-education-ru",
     "category-media-ru",
     "regru",
-    "nic-ru"
+    "nic-ru",
+    "2gis",
+    "cdek"
   ],
-  "source_bytes": 87796485,
-  "output_bytes": 83298,
-  "output_sha256": "9e018e9cb3680f558c66e0c534999b373d5199b182dfbfba9a98baab4541f737",
+  "source_bytes": 87805937,
+  "output_bytes": 83776,
+  "output_sha256": "4b2d5852843ea9114c6e5392c9c0e2f3ea3629f6fbfa8dfa3e35e184759de30b",
   "manual_domains": [
     "dom.ru",
     "beeline.ru"
   ],
   "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
-  "release_tag": "202611161155",
-  "published_at": "2026-11-16T11:55:55Z",
-  "source_sha256": "e4f9d347ab3f5f25de4c94870df31ba5d6c10eb69f2f3acde2b58ddb87438f9a",
-  "source_asset_id": 754676056,
+  "release_tag": "202611171219",
+  "published_at": "2026-11-17T12:20:08Z",
+  "source_sha256": "d04e0cf7438e08f8290e7dd7b833e138c41f884b860b584948dcc6f44c705f86",
+  "source_asset_id": 758950769,
   "builder_sha256": "629f3250f382dbdc157d3ed68a9d555efae469c6aedde767a63b42ffc3180cea",
   "category_counts": {
     "ru-available-only-inside": 170,
@@ -58,7 +60,9 @@
     "category-media-ru": 148,
     "regru": 3,
     "nic-ru": 4,
-    "geocat-ru": 2054
+    "2gis": 14,
+    "cdek": 3,
+    "geocat-ru": 2070
   },
-  "rule_count": 4132
+  "rule_count": 4165
 }
