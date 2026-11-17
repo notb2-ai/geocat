@@ -19,3 +19,5 @@ category-education-ru
 category-media-ru
 regru
 nic-ru
+2gis
+cdek
