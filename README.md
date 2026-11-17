@@ -55,7 +55,7 @@ https://raw.githubusercontent.com/notb2-ai/geocat/main/geoip.dat
 
 <!-- categories:start -->
 <details>
-<summary>GeoSite — категорий: 24 — показать список</summary>
+<summary>GeoSite — категорий: 25 — показать список</summary>
 
 ```text
 ru-available-only-inside
@@ -81,6 +81,7 @@ regru
 nic-ru
 2gis
 cdek
+kontur
 geocat-ru
 ```
 
@@ -97,11 +98,12 @@ yandex
 </details>
 
 <details>
-<summary>Ручные домены geocat-ru — 2</summary>
+<summary>Ручные домены geocat-ru — 3</summary>
 
 ```text
 dom.ru
 beeline.ru
+pachca.com
 ```
 
 </details>

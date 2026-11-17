@@ -23,14 +23,16 @@
     "regru",
     "nic-ru",
     "2gis",
-    "cdek"
+    "cdek",
+    "kontur"
   ],
   "source_bytes": 87805937,
-  "output_bytes": 83776,
-  "output_sha256": "4b2d5852843ea9114c6e5392c9c0e2f3ea3629f6fbfa8dfa3e35e184759de30b",
+  "output_bytes": 84157,
+  "output_sha256": "e48c143fffa6d39b3557ab978b39f94c2beb41f20390c7b198d858f609485415",
   "manual_domains": [
     "dom.ru",
-    "beeline.ru"
+    "beeline.ru",
+    "pachca.com"
   ],
   "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
   "release_tag": "202611171219",
@@ -62,7 +64,8 @@
     "nic-ru": 4,
     "2gis": 14,
     "cdek": 3,
-    "geocat-ru": 2070
+    "kontur": 7,
+    "geocat-ru": 2078
   },
-  "rule_count": 4165
+  "rule_count": 4180
 }
