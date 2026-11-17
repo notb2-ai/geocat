@@ -22,3 +22,4 @@ nic-ru
 2gis
 cdek
 kontur
+bitrix

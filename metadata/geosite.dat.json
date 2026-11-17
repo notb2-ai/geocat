@@ -24,15 +24,22 @@
     "nic-ru",
     "2gis",
     "cdek",
-    "kontur"
+    "kontur",
+    "bitrix"
   ],
   "source_bytes": 87805937,
-  "output_bytes": 84157,
-  "output_sha256": "e48c143fffa6d39b3557ab978b39f94c2beb41f20390c7b198d858f609485415",
+  "output_bytes": 84688,
+  "output_sha256": "c41b73f97b466ec8c39cf813b4cf36dc184a298fdf4a4b50409c581d70ea50f9",
   "manual_domains": [
     "dom.ru",
     "beeline.ru",
-    "pachca.com"
+    "pachca.com",
+    "qplus.ru",
+    "megamarket.ru",
+    "megamarket.tech",
+    "sbermegamarket.ru",
+    "eapteka.ru",
+    "samokat.ru"
   ],
   "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
   "release_tag": "202611171219",
@@ -65,7 +72,8 @@
     "2gis": 14,
     "cdek": 3,
     "kontur": 7,
-    "geocat-ru": 2078
+    "bitrix": 11,
+    "geocat-ru": 2094
   },
-  "rule_count": 4180
+  "rule_count": 4207
 }
