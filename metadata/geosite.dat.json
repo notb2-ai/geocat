@@ -27,9 +27,9 @@
     "kontur",
     "bitrix"
   ],
-  "source_bytes": 87805937,
+  "source_bytes": 87810707,
   "output_bytes": 84688,
-  "output_sha256": "c41b73f97b466ec8c39cf813b4cf36dc184a298fdf4a4b50409c581d70ea50f9",
+  "output_sha256": "239d640e3b6be860e4953af76812442d45e72c44f87dea4a023674d978b88c9f",
   "manual_domains": [
     "dom.ru",
     "beeline.ru",
@@ -42,10 +42,10 @@
     "samokat.ru"
   ],
   "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
-  "release_tag": "202611171219",
-  "published_at": "2026-11-17T12:20:08Z",
-  "source_sha256": "d04e0cf7438e08f8290e7dd7b833e138c41f884b860b584948dcc6f44c705f86",
-  "source_asset_id": 758950769,
+  "release_tag": "202611172303",
+  "published_at": "2026-11-17T23:04:11Z",
+  "source_sha256": "061d976cccf84785f725e9ef7f22ff36fd4a732cc2a2c3051cfb6704a838b7fc",
+  "source_asset_id": 760993087,
   "builder_sha256": "629f3250f382dbdc157d3ed68a9d555efae469c6aedde767a63b42ffc3180cea",
   "category_counts": {
     "ru-available-only-inside": 170,
