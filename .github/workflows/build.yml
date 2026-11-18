@@ -84,12 +84,27 @@ jobs:
           else
             python3 -m scripts.build_all
           fi
+      - name: Собрать наборы правил sing-box
+        id: sing_box
+        env:
+          SING_BOX_VERSION: "1.14.4"
+          SING_BOX_SHA256: "699a1b510aa4396b2176d32d1181920399ebf1e267835da6f3b598d0f7c24968"
+        run: |
+          archive="sing-box-${SING_BOX_VERSION}-linux-amd64"
+          package="$RUNNER_TEMP/$archive.tar.gz"
+          curl --fail --silent --show-error --location --retry 2 --max-time 60 \
+            "https://github.com/SagerNet/sing-box/releases/download/v${SING_BOX_VERSION}/$archive.tar.gz" \
+            --output "$package"
+          printf '%s  %s\n' "$SING_BOX_SHA256" "$package" | sha256sum --check
+          tar -xzf "$package" -C "$RUNNER_TEMP" "$archive/sing-box"
+          python3 -m scripts.build_sing_box "$RUNNER_TEMP/$archive/sing-box"
       - name: Опубликовать базы и отчёт
         id: publish
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -f geosite.dat geoip.dat STATUS.md README.md metadata/geosite.dat.json metadata/geoip.dat.json metadata/status.json config/geosite-categories.txt config/geoip-categories.txt config/geocat-ru-domains.txt
+          git add -A -f -- sing-box/
           if git diff --cached --quiet; then
             echo "Результат уже опубликован."
             exit 0
@@ -108,9 +123,10 @@ jobs:
         if: always()
         env:
           BUILD_RESULT: ${{ steps.databases.outcome }}
+          SING_BOX_RESULT: ${{ steps.sing_box.outcome }}
           PUBLISH_RESULT: ${{ steps.publish.outcome }}
         run: |
-          if [ "$BUILD_RESULT" = "success" ]; then
+          if [ "$BUILD_RESULT" = "success" ] && [ "$SING_BOX_RESULT" = "success" ]; then
             cat STATUS.md >> "$GITHUB_STEP_SUMMARY"
             if [ "$PUBLISH_RESULT" = "success" ]; then
               printf '\n## ✅ Публикация завершена успешно\n' >> "$GITHUB_STEP_SUMMARY"
