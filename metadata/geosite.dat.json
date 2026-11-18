@@ -27,9 +27,9 @@
     "kontur",
     "bitrix"
   ],
-  "source_bytes": 87810707,
-  "output_bytes": 84688,
-  "output_sha256": "239d640e3b6be860e4953af76812442d45e72c44f87dea4a023674d978b88c9f",
+  "source_bytes": 88308593,
+  "output_bytes": 84640,
+  "output_sha256": "cd18fad0c5d506621c1c7dba87f5fb28d6bcf353c7195973432025edf49d9ac5",
   "manual_domains": [
     "dom.ru",
     "beeline.ru",
@@ -42,10 +42,10 @@
     "samokat.ru"
   ],
   "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
-  "release_tag": "202611172303",
-  "published_at": "2026-11-17T23:04:11Z",
-  "source_sha256": "061d976cccf84785f725e9ef7f22ff36fd4a732cc2a2c3051cfb6704a838b7fc",
-  "source_asset_id": 760993087,
+  "release_tag": "202611181205",
+  "published_at": "2026-11-18T12:05:53Z",
+  "source_sha256": "405a8352ac984186d42afb4c7b206970f3e3b199b2fb7a6d1f2d6d35e51b37bf",
+  "source_asset_id": 763252734,
   "builder_sha256": "629f3250f382dbdc157d3ed68a9d555efae469c6aedde767a63b42ffc3180cea",
   "category_counts": {
     "ru-available-only-inside": 170,
@@ -53,7 +53,7 @@
     "category-ecommerce-ru": 201,
     "category-retail-ru": 82,
     "category-entertainment-ru": 35,
-    "yandex": 156,
+    "yandex": 155,
     "mailru-group": 300,
     "category-ai-ru": 12,
     "category-medicine-ru": 45,
@@ -73,7 +73,7 @@
     "cdek": 3,
     "kontur": 7,
     "bitrix": 11,
-    "geocat-ru": 2094
+    "geocat-ru": 2093
   },
-  "rule_count": 4207
+  "rule_count": 4205
 }
