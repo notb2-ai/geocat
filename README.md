@@ -54,7 +54,9 @@ https://raw.githubusercontent.com/notb2-ai/geocat/main/geoip.dat
 https://raw.githubusercontent.com/notb2-ai/geocat/main/sing-box/geocat-ru.srs
 ```
 
-Добавь набор в `route.rule_set` и укажи его тег в `route.rules`. В примере совпадения идут через существующий выход с тегом `direct`. Добавь записи в свои списки, сохранив текущие правила и выходы.
+Добавь набор в `route.rule_set`, а правила из примера — в `route.rules` перед общим правилом отправки трафика в прокси. Оба правила используют существующий выход с тегом `direct`.
+
+Правило `ip_is_private` отправляет трафик к непубличным IP-адресам напрямую. Оно встроено в sing-box и работает без скачивания GeoIP-базы.
 
 ```json
 {
@@ -64,10 +66,16 @@ https://raw.githubusercontent.com/notb2-ai/geocat/main/sing-box/geocat-ru.srs
         "type": "remote",
         "tag": "geocat-ru",
         "format": "binary",
-        "url": "https://raw.githubusercontent.com/notb2-ai/geocat/main/sing-box/geocat-ru.srs"
+        "url": "https://raw.githubusercontent.com/notb2-ai/geocat/main/sing-box/geocat-ru.srs",
+        "update_interval": "12h"
       }
     ],
     "rules": [
+      {
+        "ip_is_private": true,
+        "action": "route",
+        "outbound": "direct"
+      },
       {
         "rule_set": "geocat-ru",
         "action": "route",
@@ -78,7 +86,7 @@ https://raw.githubusercontent.com/notb2-ai/geocat/main/sing-box/geocat-ru.srs
 }
 ```
 
-sing-box проверяет обновления удалённого набора раз в сутки по умолчанию. Интервал можно изменить в `update_interval`. [Документация sing-box](https://sing-box.sagernet.org/configuration/rule-set/)
+С `update_interval: "12h"` sing-box проверяет обновления набора каждые 12 часов. GitHub Actions публикует свежую версию по своему расписанию. [Документация sing-box](https://sing-box.sagernet.org/configuration/rule-set/)
 
 ## Обновления
 
