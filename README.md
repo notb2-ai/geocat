@@ -1,6 +1,6 @@
 # GeoCat 🐈
 
-Компактные базы GeoSite и GeoIP для v2rayNG и наборы правил для sing-box на основе RunetFreedom.
+Компактные базы GeoSite и GeoIP для v2rayNG и общий набор правил для sing-box на основе RunetFreedom.
 
 Выбранные категории сохранены без изменения содержимого.
 
@@ -48,14 +48,7 @@ https://raw.githubusercontent.com/notb2-ai/geocat/main/geoip.dat
 
 ## Подключить в sing-box
 
-GeoCat публикует бинарные наборы правил `.srs`. Общий набор `geocat-ru.srs` содержит все выбранные категории GeoSite и ручные домены. Для отдельных категорий доступны свои файлы `geosite-<категория>.srs` и `geoip-<категория>.srs`.
-
-| Набор | Содержимое |
-| --- | --- |
-| [geocat-ru.srs](https://raw.githubusercontent.com/notb2-ai/geocat/main/sing-box/geocat-ru.srs) | Общий набор доменных правил GeoCat |
-| [geoip-private.srs](https://raw.githubusercontent.com/notb2-ai/geocat/main/sing-box/geoip-private.srs) | Приватные IP-сети |
-| [geoip-yandex.srs](https://raw.githubusercontent.com/notb2-ai/geocat/main/sing-box/geoip-yandex.srs) | IP-сети Яндекса |
-| [Все наборы .srs](sing-box/) | Полный список категорий GeoSite и GeoIP |
+[geocat-ru.srs](https://raw.githubusercontent.com/notb2-ai/geocat/main/sing-box/geocat-ru.srs) — единый набор для sing-box. Он собирается из категории `geocat-ru` в `geosite.dat` и включает все выбранные доменные категории и ручные домены GeoCat.
 
 ```text
 https://raw.githubusercontent.com/notb2-ai/geocat/main/sing-box/geocat-ru.srs
