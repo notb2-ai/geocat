@@ -1,29 +1,24 @@
 # GeoCat — статус обновлений
 
-Последняя успешная проверка: **19.11.2026 00:23:52 МСК**.
+Последняя успешная проверка: **20.11.2026 00:28:52 МСК**.
 
 | Файл | Статус |
 |---|---|
 | geosite.dat | 🆕 Обновлён |
-| geoip.dat | ✅ Проверен — изменений нет |
+| geoip.dat | 🆕 Обновлён |
 
-**Последнее изменение правил:** [19.11.2026 00:23:52 МСК · GeoSite −2](https://github.com/notb2-ai/geocat/actions/runs/44401010971)
+**Последнее изменение правил:** [20.11.2026 00:28:52 МСК · GeoIP +1](https://github.com/notb2-ai/geocat/actions/runs/44619133330)
 
 ## 🔍 Что изменилось
 
-**`geosite.dat`**: добавлено **0**, удалено **2**.
+**`geosite.dat`**: бинарный файл изменился, но состав правил не изменился.
+
+**`geoip.dat`**: добавлено **1**, удалено **0**.
 
 <details>
-<summary><code>yandex</code>: +0 / −1 (было 156, стало 155)</summary>
+<summary><code>yandex</code>: +1 / −0 (было 51, стало 52)</summary>
 
-- ➖ <code>domain:yandexwebcache.org</code>
-
-</details>
-
-<details>
-<summary><code>geocat-ru</code>: +0 / −1 (было 2094, стало 2093)</summary>
-
-- ➖ <code>domain:yandexwebcache.org</code>
+- ➕ <code>153.51.160.0/19</code>
 
 </details>
 
