@@ -1,32 +1,32 @@
 {
-  "checked_at": "2026-11-20T16:02:22+00:00",
-  "checked_at_moscow": "20.11.2026 19:02:22 МСК",
+  "checked_at": "2026-11-20T21:03:37+00:00",
+  "checked_at_moscow": "21.11.2026 00:03:37 МСК",
   "release": "202611201200",
-  "seconds": 3.012,
+  "seconds": 0.229,
   "files": [
     {
       "file": "geosite.dat",
-      "state": "updated",
-      "previous_release": "202611191200",
+      "state": "unchanged",
+      "previous_release": "202611201200",
       "release": "202611201200",
-      "previous_sha256": "7cc74331f6d2bbe7b79d541803e553a9e804aa81d9bc595a6adfe2b2acba2e70",
+      "previous_sha256": "86eb7dad487094fdaa0115301d4e68c082ca18254fd001214b757b5cabac62fe",
       "sha256": "86eb7dad487094fdaa0115301d4e68c082ca18254fd001214b757b5cabac62fe",
       "bytes": 84640,
       "rules": 4205,
-      "download_skipped": false,
-      "seconds": 2.785
+      "download_skipped": true,
+      "seconds": 0.011
     },
     {
       "file": "geoip.dat",
-      "state": "updated",
-      "previous_release": "202611191200",
+      "state": "unchanged",
+      "previous_release": "202611201200",
       "release": "202611201200",
-      "previous_sha256": "fc579aec90dbcbf0de37814bfe8e31016e3781577475ff17267b0a063bbd5d69",
+      "previous_sha256": "a1b1d6333a8554923e462ea9b1d3a2217c0ece4982bc0848b7f90ae318950215",
       "sha256": "a1b1d6333a8554923e462ea9b1d3a2217c0ece4982bc0848b7f90ae318950215",
       "bytes": 1196,
       "rules": 92,
-      "download_skipped": false,
-      "seconds": 0.733
+      "download_skipped": true,
+      "seconds": 0.001
     }
   ]
 }
