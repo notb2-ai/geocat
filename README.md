@@ -131,11 +131,12 @@ geocat-ru
 </details>
 
 <details>
-<summary>GeoIP — категорий: 2 — показать список</summary>
+<summary>GeoIP — категорий: 3 — показать список</summary>
 
 ```text
 private
 yandex
+telegram
 ```
 
 </details>
