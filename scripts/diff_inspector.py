@@ -61,7 +61,8 @@ def _attribute(payload: bytes) -> tuple:
     return (key, *value, _opaque_fields(payload, fields, {1, 2, 3}))
 
 
-def _geosite_items(entry: bytes) -> Counter:
+def geosite_items(entry: bytes) -> Counter:
+    """Count GeoSite rules by type, value, and attributes."""
     count = Counter()
     for n, w, start, end, *_ in protobuf_fields(entry):
         if n != 2:
@@ -120,7 +121,7 @@ def diff_file(filename: str, old: bytes, new: bytes) -> dict:
     if old == new:
         return {'file': filename, 'state': 'unchanged', 'added': 0, 'removed': 0, 'categories': []}
     previous, current = parse_geosites(old), parse_geosites(new)
-    extract = _geosite_items if filename == 'geosite.dat' else _geoip_items
+    extract = geosite_items if filename == 'geosite.dat' else _geoip_items
     categories, total_add, total_remove = [], 0, 0
     for category in dict.fromkeys((*current, *previous)):
         before = extract(previous[category]) if category in previous else Counter()

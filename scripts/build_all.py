@@ -14,7 +14,7 @@ from scripts.build_geosite_lite import (AGGREGATE_CODE, RELEASE_API, MAX_SOURCE_
     append_aggregate, atomic_write, download, parse_geosites, protobuf_fields, trim)
 from scripts.build_geoip_lite import verify_geoip
 from scripts.category_config import FILES, MANUAL_DOMAINS_FILE, manual_domains, selections, render_catalog
-from scripts.diff_inspector import diff_file, render_diffs
+from scripts.diff_inspector import diff_file, geosite_items, render_diffs
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -30,7 +30,8 @@ def encoded(obj):
 def fingerprint():
     root = Path(__file__).resolve().parent
     h = hashlib.sha256()
-    for name in ('build_all.py', 'build_geosite_lite.py', 'build_geoip_lite.py', 'category_config.py'):
+    for name in ('build_all.py', 'build_geosite_lite.py', 'build_geoip_lite.py',
+                 'category_config.py', 'diff_inspector.py'):
         h.update(name.encode()); h.update((root / name).read_bytes())
     return h.hexdigest()
 
@@ -53,6 +54,22 @@ def validate(name, data, wanted):
     if name == 'geoip.dat':
         verify_geoip(data, wanted)
     return counts
+
+def validate_aggregate(source_entries, aggregate, wanted, domains):
+    expected = {(2, domain, (), ()) for domain in domains}  # Xray RootDomain
+    for code in wanted:
+        expected.update(geosite_items(source_entries[code]))
+
+    actual = geosite_items(aggregate)
+    differences = (
+        ('missing', expected - actual.keys()),
+        ('unexpected', actual.keys() - expected),
+        ('duplicate', {rule for rule, count in actual.items() if count > 1}),
+    )
+    errors = [f'{label} ({len(rules)}): {sorted(rules, key=repr)[:5]!r}'
+              for label, rules in differences if rules]
+    if errors:
+        raise ValueError(f'{AGGREGATE_CODE}: ' + ', '.join(errors))
 
 def expected_hash(asset, assets, name):
     digest = asset.get('digest') or ''
@@ -92,6 +109,9 @@ def build_one(name, release, assets, outdir, build_hash, force=False, *, wanted,
     if reusable:
         try:
             counts = validate(name, old, published_categories)
+            if is_geosite:
+                entries = parse_geosites(old)
+                validate_aggregate(entries, entries[AGGREGATE_CODE], wanted, domains)
         except (ValueError, IndexError, UnicodeError):
             reusable = False
     if reusable:
@@ -106,6 +126,8 @@ def build_one(name, release, assets, outdir, build_hash, force=False, *, wanted,
         output, stats = trim(source, wanted)
         if is_geosite:
             output = append_aggregate(output, domains)
+            aggregate = parse_geosites(output)[AGGREGATE_CODE]
+            validate_aggregate(parse_geosites(source), aggregate, wanted, domains)
             stats.update(manual_domains=list(domains), output_bytes=len(output),
                          output_sha256=sha(output))
         counts = validate(name, output, published_categories)

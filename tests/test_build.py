@@ -66,6 +66,28 @@ class Builds(unittest.TestCase):
         self.source['geoip.dat']=b'broken'
         with self.assertRaises(ValueError):self.run_build(True)
         self.assertEqual(before,{str(p.relative_to(self.out)):p.read_bytes() for p in self.out.rglob('*') if p.is_file()})
+
+    def test_invalid_aggregate_prevents_publication(self):
+        def broken_aggregate(data, domains):
+            return data + site('geocat-ru', 'unwanted.example')
+
+        self.run_build()
+        before = (self.out / 'geosite.dat').read_bytes()
+        with patch.object(b, 'append_aggregate', side_effect=broken_aggregate):
+            with self.assertRaisesRegex(ValueError, r'geocat-ru: missing .*example.org.*unexpected .*unwanted.example'):
+                self.run_build(True)
+        self.assertEqual((self.out / 'geosite.dat').read_bytes(), before)
+
+    def test_aggregate_preserves_attributes_and_rejects_duplicates(self):
+        suffix = b'\x08\x02' + field(2, b'example.org')
+        attributed = suffix + field(3, field(1, b'direct') + b'\x10\x01')
+        selected = {'upstream': field(2, attributed)}
+        valid = field(2, attributed) + field(2, suffix)
+        b.validate_aggregate(selected, valid, ('upstream',), ('example.org',))
+        with self.assertRaisesRegex(ValueError, 'duplicate'):
+            b.validate_aggregate(selected, valid + field(2, attributed), ('upstream',), ('example.org',))
+        with self.assertRaisesRegex(ValueError, 'missing'):
+            b.validate_aggregate(selected, field(2, suffix), ('upstream',), ('example.org',))
     def test_download_failure_preserves_both_published_files(self):
         self.run_build()
         before={str(p.relative_to(self.out)):p.read_bytes() for p in self.out.rglob('*') if p.is_file()}
