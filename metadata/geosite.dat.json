@@ -15,7 +15,6 @@
     "mts-ru",
     "rostelecom",
     "t2-ru",
-    "category-public-tracker",
     "category-forums-ru",
     "category-tech-media-ru",
     "category-education-ru",
@@ -28,8 +27,8 @@
     "bitrix"
   ],
   "source_bytes": 89057169,
-  "output_bytes": 84640,
-  "output_sha256": "4247556b265e34406dcda6f5f9b2178c2601d57842d3738aa8a0001953653fbf",
+  "output_bytes": 64280,
+  "output_sha256": "5f67b3b8c4b157770be2c3d7ebb0bfb6ed1905498458d186efa085cdd21d7eee",
   "manual_domains": [
     "dom.ru",
     "beeline.ru",
@@ -62,7 +61,6 @@
     "mts-ru": 13,
     "rostelecom": 9,
     "t2-ru": 3,
-    "category-public-tracker": 437,
     "category-forums-ru": 11,
     "category-tech-media-ru": 34,
     "category-education-ru": 20,
@@ -73,7 +71,7 @@
     "cdek": 3,
     "kontur": 7,
     "bitrix": 11,
-    "geocat-ru": 2093
+    "geocat-ru": 1656
   },
-  "rule_count": 4205
+  "rule_count": 3331
 }

@@ -97,7 +97,7 @@ GitHub Actions проверяет новые базы ежедневно в 16:1
 
 <!-- categories:start -->
 <details>
-<summary>GeoSite — категорий: 26 — показать список</summary>
+<summary>GeoSite — категорий: 25 — показать список</summary>
 
 ```text
 ru-available-only-inside
@@ -114,7 +114,6 @@ megafon
 mts-ru
 rostelecom
 t2-ru
-category-public-tracker
 category-forums-ru
 category-tech-media-ru
 category-education-ru

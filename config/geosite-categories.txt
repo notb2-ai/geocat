@@ -12,7 +12,6 @@ megafon
 mts-ru
 rostelecom
 t2-ru
-category-public-tracker
 category-forums-ru
 category-tech-media-ru
 category-education-ru
