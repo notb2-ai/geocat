@@ -2,12 +2,11 @@
   "source_categories": 266,
   "selected_categories": [
     "private",
-    "yandex",
-    "telegram"
+    "ru"
   ],
   "source_bytes": 17955457,
-  "output_bytes": 1196,
-  "output_sha256": "a1b1d6333a8554923e462ea9b1d3a2217c0ece4982bc0848b7f90ae318950215",
+  "output_bytes": 400158,
+  "output_sha256": "2620a9ac0d5ef8e66b93def5ea57c46068df5658e7e806a3714c50624663af24",
   "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
   "release_tag": "202611231330",
   "published_at": "2026-11-23T13:31:10Z",
@@ -16,9 +15,8 @@
   "builder_sha256": "d65481ec1618702dcc0d1c6311aa352608f9743a13102946cc20b3bf4028f3e4",
   "category_counts": {
     "private": 28,
-    "yandex": 52,
-    "telegram": 12
+    "ru": 25365
   },
-  "rule_count": 92,
+  "rule_count": 25393,
   "geoip_private_cidr_count": 28
 }
