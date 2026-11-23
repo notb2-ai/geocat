@@ -22,3 +22,4 @@ nic-ru
 cdek
 kontur
 bitrix
+sber

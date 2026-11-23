@@ -97,7 +97,7 @@ GitHub Actions проверяет новые базы ежедневно в 16:1
 
 <!-- categories:start -->
 <details>
-<summary>GeoSite — категорий: 25 — показать список</summary>
+<summary>GeoSite — категорий: 26 — показать список</summary>
 
 ```text
 ru-available-only-inside
@@ -124,6 +124,7 @@ nic-ru
 cdek
 kontur
 bitrix
+sber
 geocat-ru
 ```
 
@@ -141,18 +142,13 @@ telegram
 </details>
 
 <details>
-<summary>Ручные домены geocat-ru — 10</summary>
+<summary>Ручные домены geocat-ru — 5</summary>
 
 ```text
 dom.ru
 beeline.ru
 pachca.com
 qplus.ru
-megamarket.ru
-megamarket.tech
-sbermegamarket.ru
-eapteka.ru
-samokat.ru
 tengri-retreat.ru
 ```
 
