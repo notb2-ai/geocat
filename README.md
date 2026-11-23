@@ -141,7 +141,7 @@ telegram
 </details>
 
 <details>
-<summary>Ручные домены geocat-ru — 9</summary>
+<summary>Ручные домены geocat-ru — 10</summary>
 
 ```text
 dom.ru
@@ -153,6 +153,7 @@ megamarket.tech
 sbermegamarket.ru
 eapteka.ru
 samokat.ru
+tengri-retreat.ru
 ```
 
 </details>

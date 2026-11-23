@@ -26,9 +26,9 @@
     "kontur",
     "bitrix"
   ],
-  "source_bytes": 89062409,
-  "output_bytes": 64280,
-  "output_sha256": "493e174a856a844a68c3a1e1c96730a65cd0df90ea9380125041e18127e83288",
+  "source_bytes": 89026919,
+  "output_bytes": 64303,
+  "output_sha256": "c7a4c1651697dbcbbc35606ef21aec7d715d3515e527dc977e14b1cf59a04fe5",
   "manual_domains": [
     "dom.ru",
     "beeline.ru",
@@ -38,13 +38,14 @@
     "megamarket.tech",
     "sbermegamarket.ru",
     "eapteka.ru",
-    "samokat.ru"
+    "samokat.ru",
+    "tengri-retreat.ru"
   ],
   "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
-  "release_tag": "202611221150",
-  "published_at": "2026-11-22T11:51:52Z",
-  "source_sha256": "101198476e2468ebc510a0bdf4fc57f296935469c445a2136635b81fdeb51e56",
-  "source_asset_id": 778897277,
+  "release_tag": "202611231330",
+  "published_at": "2026-11-23T13:31:10Z",
+  "source_sha256": "4b1b902016837f473b37b3d9198ca2b9d240eefde7be60a5207b35419ba7282c",
+  "source_asset_id": 783068036,
   "builder_sha256": "d65481ec1618702dcc0d1c6311aa352608f9743a13102946cc20b3bf4028f3e4",
   "category_counts": {
     "ru-available-only-inside": 170,
@@ -71,7 +72,7 @@
     "cdek": 3,
     "kontur": 7,
     "bitrix": 11,
-    "geocat-ru": 1656
+    "geocat-ru": 1657
   },
-  "rule_count": 3331
+  "rule_count": 3332
 }
