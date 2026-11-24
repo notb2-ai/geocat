@@ -1,8 +1,8 @@
 {
-  "checked_at": "2026-11-23T19:58:48+00:00",
-  "checked_at_moscow": "23.11.2026 22:58:48 МСК",
+  "checked_at": "2026-11-24T00:48:29+00:00",
+  "checked_at_moscow": "24.11.2026 03:48:29 МСК",
   "release": "202611231330",
-  "seconds": 1.277,
+  "seconds": 0.39,
   "files": [
     {
       "file": "geosite.dat",
@@ -14,19 +14,19 @@
       "bytes": 67505,
       "rules": 3489,
       "download_skipped": true,
-      "seconds": 0.031
+      "seconds": 0.064
     },
     {
       "file": "geoip.dat",
-      "state": "updated",
+      "state": "unchanged",
       "previous_release": "202611231330",
       "release": "202611231330",
-      "previous_sha256": "a1b1d6333a8554923e462ea9b1d3a2217c0ece4982bc0848b7f90ae318950215",
+      "previous_sha256": "2620a9ac0d5ef8e66b93def5ea57c46068df5658e7e806a3714c50624663af24",
       "sha256": "2620a9ac0d5ef8e66b93def5ea57c46068df5658e7e806a3714c50624663af24",
       "bytes": 400158,
       "rules": 25393,
-      "download_skipped": false,
-      "seconds": 0.89
+      "download_skipped": true,
+      "seconds": 0.123
     }
   ]
 }
