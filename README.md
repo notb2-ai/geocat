@@ -97,7 +97,7 @@ GitHub Actions проверяет новые базы ежедневно в 16:1
 
 <!-- categories:start -->
 <details>
-<summary>GeoSite — категорий: 26 — показать список</summary>
+<summary>GeoSite — категорий: 28 — показать список</summary>
 
 ```text
 ru-available-only-inside
@@ -125,6 +125,8 @@ cdek
 kontur
 bitrix
 sber
+headhunter
+skyeng
 geocat-ru
 ```
 
@@ -141,7 +143,7 @@ ru
 </details>
 
 <details>
-<summary>Ручные домены geocat-ru — 5</summary>
+<summary>Ручные домены geocat-ru — 17</summary>
 
 ```text
 dom.ru
@@ -149,6 +151,18 @@ beeline.ru
 pachca.com
 qplus.ru
 tengri-retreat.ru
+tinkoff.com
+wildberries.com
+skyeng.net
+amediateka.com
+rambler.com
+afisha.com
+drom.com
+hh.com
+superjob.com
+skillbox.com
+geekbrains.com
+superjob.ru
 ```
 
 </details>

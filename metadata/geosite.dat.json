@@ -25,23 +25,37 @@
     "cdek",
     "kontur",
     "bitrix",
-    "sber"
+    "sber",
+    "headhunter",
+    "skyeng"
   ],
-  "source_bytes": 89026919,
-  "output_bytes": 67505,
-  "output_sha256": "2722df09b5304254da20b67bfcda2ec83079c086351f17ec09958e18bbb72393",
+  "source_bytes": 89331047,
+  "output_bytes": 68011,
+  "output_sha256": "d4d248c1410dc82609e32dfaff3185d834d414f7ae8bfc75126e127dcb36ad34",
   "manual_domains": [
     "dom.ru",
     "beeline.ru",
     "pachca.com",
     "qplus.ru",
-    "tengri-retreat.ru"
+    "tengri-retreat.ru",
+    "tinkoff.com",
+    "wildberries.com",
+    "skyeng.net",
+    "amediateka.com",
+    "rambler.com",
+    "afisha.com",
+    "drom.com",
+    "hh.com",
+    "superjob.com",
+    "skillbox.com",
+    "geekbrains.com",
+    "superjob.ru"
   ],
   "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
-  "release_tag": "202611231330",
-  "published_at": "2026-11-23T13:31:10Z",
-  "source_sha256": "4b1b902016837f473b37b3d9198ca2b9d240eefde7be60a5207b35419ba7282c",
-  "source_asset_id": 783068036,
+  "release_tag": "202611241408",
+  "published_at": "2026-11-24T14:09:00Z",
+  "source_sha256": "b9081dee8f8eb67cbfb0199e9890403179bd616700e230fcd7b8e9765986370b",
+  "source_asset_id": 787450983,
   "builder_sha256": "d65481ec1618702dcc0d1c6311aa352608f9743a13102946cc20b3bf4028f3e4",
   "category_counts": {
     "ru-available-only-inside": 170,
@@ -69,7 +83,9 @@
     "kontur": 7,
     "bitrix": 11,
     "sber": 100,
-    "geocat-ru": 1714
+    "headhunter": 8,
+    "skyeng": 2,
+    "geocat-ru": 1736
   },
-  "rule_count": 3489
+  "rule_count": 3521
 }

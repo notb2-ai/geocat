@@ -23,3 +23,5 @@ cdek
 kontur
 bitrix
 sber
+headhunter
+skyeng
