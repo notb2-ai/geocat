@@ -1,5 +1,5 @@
 {
-  "source_categories": 1567,
+  "source_categories": 1568,
   "selected_categories": [
     "ru-available-only-inside",
     "category-bank-ru",
@@ -29,9 +29,9 @@
     "headhunter",
     "skyeng"
   ],
-  "source_bytes": 89331047,
-  "output_bytes": 68011,
-  "output_sha256": "d4d248c1410dc82609e32dfaff3185d834d414f7ae8bfc75126e127dcb36ad34",
+  "source_bytes": 89612572,
+  "output_bytes": 77795,
+  "output_sha256": "e3e8117f2331f5249b0cc0e3e3cc131f373936a423cea91006908c9c99994c1d",
   "manual_domains": [
     "dom.ru",
     "beeline.ru",
@@ -52,25 +52,25 @@
     "superjob.ru"
   ],
   "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
-  "release_tag": "202611241408",
-  "published_at": "2026-11-24T14:09:00Z",
-  "source_sha256": "b9081dee8f8eb67cbfb0199e9890403179bd616700e230fcd7b8e9765986370b",
-  "source_asset_id": 787450983,
+  "release_tag": "202611251321",
+  "published_at": "2026-11-25T13:22:30Z",
+  "source_sha256": "1b65cb64f5ae0f5a0c0e9ee7b9d6303b3659e8e26881bc372edb9ffc10999576",
+  "source_asset_id": 791651316,
   "builder_sha256": "d65481ec1618702dcc0d1c6311aa352608f9743a13102946cc20b3bf4028f3e4",
   "category_counts": {
-    "ru-available-only-inside": 170,
+    "ru-available-only-inside": 434,
     "category-bank-ru": 358,
     "category-ecommerce-ru": 201,
     "category-retail-ru": 82,
     "category-entertainment-ru": 35,
     "yandex": 155,
     "mailru-group": 300,
-    "category-ai-ru": 12,
+    "category-ai-ru": 13,
     "category-medicine-ru": 45,
     "category-travel-ru": 25,
-    "megafon": 12,
-    "mts-ru": 13,
-    "rostelecom": 9,
+    "megafon": 17,
+    "mts-ru": 15,
+    "rostelecom": 13,
     "t2-ru": 3,
     "category-forums-ru": 11,
     "category-tech-media-ru": 34,
@@ -85,7 +85,7 @@
     "sber": 100,
     "headhunter": 8,
     "skyeng": 2,
-    "geocat-ru": 1736
+    "geocat-ru": 2011
   },
-  "rule_count": 3521
+  "rule_count": 4072
 }
