@@ -4,19 +4,19 @@
     "private",
     "ru"
   ],
-  "source_bytes": 17955437,
-  "output_bytes": 400158,
-  "output_sha256": "2620a9ac0d5ef8e66b93def5ea57c46068df5658e7e806a3714c50624663af24",
+  "source_bytes": 18127549,
+  "output_bytes": 400934,
+  "output_sha256": "e9ce8dcc8f0db78f8012d23f7aa3e85ce7a044e2452ce40947f48b2920b90207",
   "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
-  "release_tag": "202611251321",
-  "published_at": "2026-11-25T13:22:30Z",
-  "source_sha256": "76f55561f69cad772dfd12454262be53db6145f57fee7f51231bc9bf934e55fc",
-  "source_asset_id": 791651688,
+  "release_tag": "202611261300",
+  "published_at": "2026-11-26T13:01:22Z",
+  "source_sha256": "16f05c48b50b8d47448d2ca7668fa2cd5df00f706e4e89fb954be3182d7c5c56",
+  "source_asset_id": 795919371,
   "builder_sha256": "d65481ec1618702dcc0d1c6311aa352608f9743a13102946cc20b3bf4028f3e4",
   "category_counts": {
     "private": 28,
-    "ru": 25365
+    "ru": 25421
   },
-  "rule_count": 25393,
+  "rule_count": 25449,
   "geoip_private_cidr_count": 28
 }
