@@ -29,9 +29,9 @@
     "headhunter",
     "skyeng"
   ],
-  "source_bytes": 89585084,
+  "source_bytes": 90095067,
   "output_bytes": 77795,
-  "output_sha256": "1bfe043167e373f3e2501c012004988ed93f9a62e4196d5130ef5364545336cc",
+  "output_sha256": "f1520a34357be1489912408d20ce7e570b43712bc1a183de5404100971f070c5",
   "manual_domains": [
     "dom.ru",
     "beeline.ru",
@@ -52,10 +52,10 @@
     "superjob.ru"
   ],
   "origin_repo": "runetfreedom/russia-v2ray-rules-dat",
-  "release_tag": "202611261300",
-  "published_at": "2026-11-26T13:01:22Z",
-  "source_sha256": "6dc2e413e30ad0e27973fdc3aa3b9a26f3cec8d3f213e369586c13bc763149c9",
-  "source_asset_id": 795919002,
+  "release_tag": "202611271258",
+  "published_at": "2026-11-27T12:59:33Z",
+  "source_sha256": "80f120293a721f1fb8cb8c94a07d4606eb5e98410af07270f73acfdaf4209d12",
+  "source_asset_id": 800510134,
   "builder_sha256": "d65481ec1618702dcc0d1c6311aa352608f9743a13102946cc20b3bf4028f3e4",
   "category_counts": {
     "ru-available-only-inside": 434,
